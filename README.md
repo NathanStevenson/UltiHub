@@ -2,9 +2,9 @@
 Premier Ultimate Frisbee Management Portal built using Django, hosted by Vercel, and UI developed using Figma.
 
 ## Important Links
-Website URL: __blank__
-Figma Design: https://www.figma.com/file/WfzGyg4ZP3vmL1oQzRNcdo/UltiHub-Designs?type=design&node-id=0-1&t=BddygqAfsEESea1W-0
-PostGresSQL Database: __blank__
+* Website URL: __blank__
+* Figma Design: https://www.figma.com/file/WfzGyg4ZP3vmL1oQzRNcdo/UltiHub-Designs?type=design&node-id=0-1&t=BddygqAfsEESea1W-0
+* PostGresSQL Database: __blank__
 
 ### Future Plans
 1. Design the UI using Figma. Include the base landing page, password protected portal, adding new teams form, 
