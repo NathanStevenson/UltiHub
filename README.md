@@ -2,7 +2,7 @@
 Premier Ultimate Frisbee Management Portal built using Django, hosted by Vercel, and UI developed using Figma.
 
 #### Want to Contribute:
-Feel free to create a new branch and clone the repo and commit any changes to be approved via merge requests.
+Feel free to fork the repository and creating pull requests. Can be anything from code or ideas in the "Features" section below.
 
 ## Important Links
 * Website URL: __blank__
@@ -28,6 +28,8 @@ Feel free to create a new branch and clone the repo and commit any changes to be
 5. After thorough testing release to the public (if really flushed out look into payment gate services ($10 a year))
 
 ### Features
+
+#### Suggestions
 
 #### Permissions/Logistics
 * Whoever added your team to the database will be the original admin for your team
