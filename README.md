@@ -1,6 +1,9 @@
 # UltiHub
 Premier Ultimate Frisbee Management Portal built using Django, hosted by Vercel, and UI developed using Figma.
 
+#### Want to Contribute:
+Feel free to create a new branch and clone the repo and commit any changes to be approved via merge requests.
+
 ## Important Links
 * Website URL: __blank__
 * Figma Design: https://www.figma.com/file/WfzGyg4ZP3vmL1oQzRNcdo/UltiHub-Designs?type=design&node-id=0-1&t=BddygqAfsEESea1W-0
