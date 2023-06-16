@@ -40,9 +40,6 @@ INSTALLED_APPS = [
 
     'portal',
     'bootstrap5',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +79,7 @@ WSGI_APPLICATION = 'UltiHub.wsgi.app'
 # this makes it so that the database credentials are not made public
 from dotenv import load_dotenv
 import os
+load_dotenv()
 
 DATABASES = {
     'default': {
