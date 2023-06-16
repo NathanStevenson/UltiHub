@@ -80,12 +80,12 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'URL': os.getenv('POSTGRES_URL'),
-        'NAME': os.getenv('PGNAME'),
-        'USER': os.getenv('PGUSER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('PGHOST'),
-        'PORT': os.getenv('PGPORT'),
+        'URL': 'postgresql://postgres:yXdNzQqvYzg2lfkVySTJ@containers-us-west-35.railway.app:7174/railway',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'yXdNzQqvYzg2lfkVySTJ',
+        'HOST': 'containers-us-west-35.railway.app',
+        'PORT': 7174,
     }
 }
 
