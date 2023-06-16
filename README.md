@@ -10,13 +10,13 @@ Feel free to fork the repository and creating pull requests. Can be anything fro
 * PostGresSQL Database: __blank__
 
 ### Future Plans
-1. Design the UI using Figma. 
+- [x] Design the UI using Figma.
 
-2. Host a default Django app on Vercel with hot reloading
+- [ ] Host a default Django app on Vercel with hot reloading
 
-3. Figure out how to datascrape USAU (namely how to convert the teamIDs into usuable team names)
+- [ ] Figure out how to datascrape USAU (namely how to convert the teamIDs into usuable team names)
 
-4. Begin coding the project. Stages described below:
+- [ ] Begin coding the project. Stages described below:
     - Code the default landing page (has our logo and asks you to search for your team)
     - Code the process of adding a new team via a form. Necessary stuff (team name, point of contacts email, team password, team logo)
     - Code the default landing home page for the team
@@ -25,7 +25,9 @@ Feel free to fork the repository and creating pull requests. Can be anything fro
     - Implement each of the above features and UI described and allow teams to customize their default landing page
     - Use Night Train guys to help test and see if they have any feedback about what to add
 
-5. After thorough testing release to the public (if really flushed out look into payment gate services ($10 a year))
+- [ ] After thorough testing release to the public (if really flushed out look into payment gate services ($10 a year))
+
+- [ ] Develop an app for the plaform
 
 ### Features
 
