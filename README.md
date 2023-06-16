@@ -66,7 +66,7 @@ hotel+field addresses, what field/time next practice is, as well as an ongoing t
 
 * Users with elevated privileges can also enable two other tabs to appear here: film room and discussion board
 * Discussion board will allow all users to post questions they have and facilitate discussion
-* Film Room will allow teams to link their film or other teams film and the portal will add some nice icons and make it look clean
+* Film Room will allow teams to link their film or other teams film and the portal will add some nice icons and make it look clean. In upload film form have boxes for URL, names of teams, and season.
 
 #### Players
 * This will include a list of all members of the current roster and the coaches. You will be able to examine all other players profiles.
