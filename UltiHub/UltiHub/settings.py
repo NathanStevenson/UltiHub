@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-aysqquxdh+x%!sjwm^2-ng!nza6jax(5ns!q$9qn2=1^n+e(6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
 
 # Application definition
@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'portal',
+    'bootstrap5',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'UltiHub.wsgi.application'
+WSGI_APPLICATION = 'UltiHub.wsgi.app'
 
 
 # Database
@@ -80,12 +86,12 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'URL': 'postgresql://postgres:yXdNzQqvYzg2lfkVySTJ@containers-us-west-35.railway.app:7174/railway',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'yXdNzQqvYzg2lfkVySTJ',
-        'HOST': 'containers-us-west-35.railway.app',
-        'PORT': 7174,
+        'URL': os.getenv('POSTGRES_URL'),
+        'NAME': os.getenv('PGNAME'),
+        'USER': os.getenv('PGUSER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('PGHOST'),
+        'PORT': os.getenv('PGPORT'),
     }
 }
 
