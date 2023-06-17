@@ -1,6 +1,14 @@
 # UltiHub
 Premier Ultimate Frisbee Management Portal built using Django, hosted by Vercel, and UI developed using Figma.
 
+## Deployment Process
+This app is deployed to production via the service Vercel following the tutorial: https://vercel.com/templates/python/django-hello-world
+
+Important Notes:
+* Make sure that the "UltiHub" project is the root directory of the GitHub repo. Originally had two other folders and the deployment did not work.
+* Include the vercel.json file, and make the proper modifications to UltiHub/wsgi.py and UltiHub/settings.py to support the Vercel development.
+* For security purposes the database credentials have been hidden inside the .env file, which is the industry standard for websites in production.
+
 #### Want to Contribute:
 Feel free to fork the repository and creating pull requests. Can be anything from code or ideas in the "Features" section below.
 
