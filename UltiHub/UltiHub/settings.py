@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-aysqquxdh+x%!sjwm^2-ng!nza6jax(5ns!q$9qn2=1^n+e(6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'ulti-hub.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
 
 # Application definition
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'portal',
-    'bootstrap5',
 ]
 
 MIDDLEWARE = [

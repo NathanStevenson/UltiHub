@@ -3,7 +3,7 @@
       {
         "src": "UltiHub/wsgi.py",
         "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb" }
+        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
       }
     ],
     "routes": [
@@ -11,6 +11,5 @@
         "src": "/(.*)",
         "dest": "UltiHub/wsgi.py"
       }
-    ],
-    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    ]
 }
