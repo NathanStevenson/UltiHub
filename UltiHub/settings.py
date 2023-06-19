@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'portal',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -91,6 +92,10 @@ DATABASES = {
         'PORT': os.getenv('PGPORT'),
     }
 }
+
+# specify where the media images will be stored
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation

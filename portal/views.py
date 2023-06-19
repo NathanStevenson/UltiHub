@@ -1,16 +1,13 @@
 from django.shortcuts import render
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.urls import reverse
+from .models import *
 
-
+# view for the main loading screen
 def index(request):
-    now = datetime.now()
-    html = f'''
-    <html>
-        <body>
-            <h1>Hello from Vercel! Testing </h1>
-            <p>The current time is { now }.</p>
-        </body>
-    </html>
-    '''
-    return HttpResponse(html)
+    data = Team.objects.all()
+    context = {
+        'data' : data
+    }
+    return render(request,"index.html", context)
