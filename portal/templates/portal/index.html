@@ -1,0 +1,81 @@
+{% comment %} for login stuff and image displaying {% endcomment %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        {% load socialaccount %}
+
+        <title>UltiHub</title>
+        <link rel="icon" type="image/x-icon" href="/media/pics/UH_Brand.png">
+    </head>
+
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div id="header" style="background-color:#404040; height: 15%">
+            <div class="d-inline-block mt-3 ms-4 float-start">
+                <img src="/media/pics/UH_Brand.png" class="rounded-circle border border-dark border-2" alt="UltiHub Logo" style="height:70%">
+            </div>
+
+            <div class="d-inline-block ms-4" style="margin-top:2.5%">
+                <h1 class='text-white fw-bold'>UltiHub</h1>
+            </div>
+            
+            {% if user.is_authenticated %}
+                <div class="d-inline-block float-end me-4 dropdown position-relative">
+                    <button class="btn dropdown-toggle position-relative mt-2" type="button" id="dropdownMenuButton1" 
+                    data-bs-toggle="dropdown" aria-expanded="false" style="height: 70%; cursor:pointer; color:white;">
+                        <img src="{{user.socialaccount_set.all.0.extra_data.picture}}" 
+                        alt="Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}"
+                        class="position-relative" id="profile"
+                        style="height: 100%; border-radius: 50%;"/>
+                    </button>
+                    <ul class="dropdown-menu" style="position: relative;">
+                        <li><a class="disabled dropdownItem text-dark" href="#">Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}!</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdownItem" href="/main/profile/{{user.id}}/">Profile</a></li>
+                        <li><a class="dropdownItem" href="/main/friends/{{user.id}}">Friends</a></li>
+                        <li><a class="dropdownItem" href="/main/addfriend/">Add Friends</a></li>
+                        <li><a class="dropdownItem" href="/main/friendrequests/">Friend Requests <p class="d-inline text-white bg bg-danger fw-bold rounded-circle px-1 pb-1">{{numFriendRequests}}</p> </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdownItem" href="/accounts/logout/">Logout</a></li>
+                    </ul>
+                </div>
+            {% else %}
+            <div class="d-inline-block float-end pt-3 mt-1 me-5 position-relative">
+                <a href="{% provider_login_url 'google' %}" style=" position:relative; text-decoration:none; cursor:pointer; width:100%">Sign In</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class='mt-5'>
+            <h2 class='text-white text-center algin-middle'>Introducing Chilliness to Team Management</h2>
+        </div>
+
+        <div class='text-center'>
+            <input type="text" placeholder="Connect to your Frisbee Portal..." class='w-50 p-2 rounded-3 mt-5'>
+        </div>
+
+        <div class="d-flex justify-content-evenly text-center mx-4" style="margin-top:10%">
+            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
+                <h4 class='p-4 text-center'>Customizable Team Portal to streamline team management</h4>
+            </div>
+
+            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
+                <h4 class='p-4 text-center'>Currently supporting n different Ultimate Firsbee Clubs from around the world!</h4>
+            </div>
+
+            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
+                <h4 class='p-4 text-center'>Continually adding new features. Contact us for any reccomendations!</h4>
+            </div>
+
+            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
+                <h4 class='p-4 text-center'>Cannot find your team? Add your team to our database!</h4>
+            </div>
+        <div>
+    </body>
+</html>

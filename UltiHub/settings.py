@@ -27,7 +27,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
+# Enabling Google Login Functionality
 
+# Site ID is which site you want it to be with. for now while in development keep it to local (2), production is on (3)
+SITE_ID = 2
+
+# bypasses Django's default confirmation page
+SOCIALACCOUNT_LOGIN_ON_GET=True
+ACCOUNT_LOGOUT_ON_GET= True
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": {
+            "profile",
+            "email"
+        },
+        "AUTH_PARAMS": {
+            "access_type": "online"
+        }
+    }
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,6 +59,12 @@ INSTALLED_APPS = [
 
     'portal',
     'bootstrap5',
+    # google login stuff
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +163,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Google Login Backend 
+
+AUTHENTICATION_BACKENDS = {
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend"
+}
+
+# upon login where do you want the users to be redirected to
+LOGIN_REDIRECT_URL = "/"
+
+# upon logout where do you want the users to be redirected to
+LOGOUT_REDIRECT_URL = "/"
