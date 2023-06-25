@@ -4,6 +4,7 @@
 __pycache__
 db.sqlite3
 media
+client_secret_865562685573-fj4vfc3cgh43878n13lq82mivkfcqr5g.apps.googleusercontent.com.json
 
 # Environments 
 .env 
