@@ -10,9 +10,38 @@
         {% bootstrap_css %}
         {% bootstrap_javascript %}
         {% load socialaccount %}
+        {% load static %}
 
         <title>UltiHub</title>
         <link rel="icon" type="image/x-icon" href="/media/pics/UH_Brand.png">
+
+        <style>
+            #signin {
+                position: relative; 
+                text-decoration: none; 
+                cursor: pointer; 
+                width: 100%;
+                color: gray;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .dropdownItem {
+                text-align: center;
+                color: black;
+                font-weight: 500;
+                text-decoration: none; 
+            }
+
+            #ddItem {
+                text-align: center;
+            }
+
+            #ddItem:hover {
+                background: lightgray;
+            }
+
+        </style>
     </head>
 
     <body class="vh-100 vw-100" style="background-color:#2E4E6F">
@@ -27,55 +56,66 @@
             
             {% if user.is_authenticated %}
                 <div class="d-inline-block float-end me-4 dropdown position-relative">
-                    <button class="btn dropdown-toggle position-relative mt-2" type="button" id="dropdownMenuButton1" 
-                    data-bs-toggle="dropdown" aria-expanded="false" style="height: 70%; cursor:pointer; color:white;">
+                    <button class="btn dropdown-toggle position-relative mt-4 rounded-circle" type="button" id="dropdownMenuButton1" 
+                    data-bs-toggle="dropdown" aria-expanded="false" style="height: 60%; cursor:pointer; color:white; width:75%;">
                         <img src="{{user.socialaccount_set.all.0.extra_data.picture}}" 
                         alt="Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}"
                         class="position-relative" id="profile"
                         style="height: 100%; border-radius: 50%;"/>
                     </button>
-                    <ul class="dropdown-menu" style="position: relative;">
-                        <li><a class="disabled dropdownItem text-dark" href="#">Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}!</a></li>
+                    <ul class="dropdown-menu border border-3 border-dark" style="position: relative; width: 200%">
+                        <li class="fw-bold text-center px-2">Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}!</li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdownItem" href="/main/profile/{{user.id}}/">Profile</a></li>
-                        <li><a class="dropdownItem" href="/main/friends/{{user.id}}">Friends</a></li>
-                        <li><a class="dropdownItem" href="/main/addfriend/">Add Friends</a></li>
-                        <li><a class="dropdownItem" href="/main/friendrequests/">Friend Requests <p class="d-inline text-white bg bg-danger fw-bold rounded-circle px-1 pb-1">{{numFriendRequests}}</p> </a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="profile/{{user.id}}/">Profile</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="customize/">Customize</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="contact/">Contact</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="about/">About</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdownItem" href="/accounts/logout/">Logout</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/accounts/logout/">Logout</a></li>
                     </ul>
                 </div>
             {% else %}
-            <div class="d-inline-block float-end pt-3 mt-1 me-5 position-relative">
-                <a href="{% provider_login_url 'google' %}" style=" position:relative; text-decoration:none; cursor:pointer; width:100%">Sign In</a>
+            <div class="d-inline-block float-end pt-3 mt-4 me-5 position-relative">
+                <a href="{% provider_login_url 'google' %}" id="signin">Sign In</a>
             </div>
             {% endif %}
         </div>
 
+        {% block content %}
         <div class='mt-5'>
             <h2 class='text-white text-center algin-middle'>Introducing Chilliness to Team Management</h2>
         </div>
 
+        {% comment %} there are many different ways you can submit forms look them up if more info needed in the future {% endcomment %}
         <div class='text-center'>
-            <input type="text" placeholder="Connect to your Frisbee Portal..." class='w-50 p-2 rounded-3 mt-5'>
+            {% comment %} any forms that use POST requests must have a csrf token for security {% endcomment %}
+            <form method="POST">
+                {% csrf_token %}
+                {% comment %} onchange means that as the user enters values POST requests are sent out all the time {% endcomment %}
+                {% comment %} onchange works when you click somewhere else. If you just want it for typing you can do "onkeyup"  {% endcomment %}
+                <input type="text" placeholder="Connect to your Frisbee Portal..." class='w-50 p-2 rounded-3 mt-5' name='teamsearch' onchange="this.form.submit()">
+            </form>
         </div>
 
         <div class="d-flex justify-content-evenly text-center mx-4" style="margin-top:10%">
-            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
-                <h4 class='p-4 text-center'>Customizable Team Portal to streamline team management</h4>
+            <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
+                <h4 class='text-center'>Customizable Team Portal to streamline team management</h4>
             </div>
 
-            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
-                <h4 class='p-4 text-center'>Currently supporting n different Ultimate Firsbee Clubs from around the world!</h4>
+            <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
+                <h4 class='text-center'>Currently supporting n different Ultimate Firsbee Clubs from around the world!</h4>
             </div>
 
-            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
-                <h4 class='p-4 text-center'>Continually adding new features. Contact us for any reccomendations!</h4>
+            <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
+                <h4 class='text-center'>Continually adding new features. Contact us for any reccomendations!</h4>
             </div>
 
-            <div class='rounded-3 shadow mx-5' style='background-color:#DBDBDB'>
-                <h4 class='p-4 text-center'>Cannot find your team? Add your team to our database!</h4>
+            <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
+                <h4 class='text-center d-inline'>Cannot find your team? 
+                    <a href="addteam/" class="text-center fs-4 text-decoration-underline d-inline text-dark" style="font-weight: 500;">Add your team</a>
+                     to our database!</h4>
             </div>
         <div>
+        {% endblock content %}
     </body>
 </html>

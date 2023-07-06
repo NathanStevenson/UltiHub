@@ -1,0 +1,90 @@
+{% extends 'portal/index.html' %}
+{% comment %} this copies the default header bar for users who havent joined a portal yet {% endcomment %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        <style>
+
+        </style>
+    </head>
+    {% block content %}
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div class="w-50 h-75 mx-auto border border-5 border-dark shadow" style="background-color: lightgray; margin-top: 2.5%; border-radius: 5%;">
+            
+            {% comment %} enctype allows files to be uploaded with the form for image data {% endcomment %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% comment %} Image Upload and Title {% endcomment %}
+                {% comment %} <div class="d-flex mt-2">
+                    <div class="flex-shrink w-25 me-5">
+                        <img src="/media/pics/default_prof_pic.png" alt="Default Logo" class="rounded-circle mt-4 ms-5 d-block" style="width: 75%; height: 75%;">
+                        <input type="file" class="text-center ms-4 mt-3" value="Add Team Logo" name="logo">
+                    </div>
+
+                    <div class="mt-5">
+                        <h1 style="font-size: 70px; font-weight: 1200;">Add Your Team</h1>
+                    </div>
+                </div>
+
+                {% comment %} Input Boxes {% endcomment %}
+                {% comment %} <div class="d-flex flex-column mt-5">
+
+                    <div class="d-flex justify-content-evenly">
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Team Name:</p>
+                            <input type="text" name="name">
+                        </div>
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Level (College/Club):</p>
+                            <input type="text" name="level">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-evenly">
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Type:</p>
+                            <select class='w-100' name="type">
+                                <option>Open</option>
+                                <option>Mixed</option>
+                                <option>Women</option>
+                            </select>
+                        </div>
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Team Email:</p>
+                            <input type="email" name="email">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-evenly">
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Team Password:</p>
+                            <input type="password" name="password">
+                        </div>
+                        <div class='w-25'>
+                            <p class='mb-0 mt-2 fw-bold'>Confirm Team Password:</p>
+                            <input type="password" name="confirm_password">
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+                {% comment %} Submit and Cancel Buttons {% endcomment %}
+                <div class="d-flex w-50 mx-auto mt-5 justify-content-between">
+                    {% comment %} Django views are able to grab the values in the templates by their "name" {% endcomment %}
+                    <input type="submit" value="Submit" name="Submit" class="btn btn-primary px-3 fw-bold" style="width:33%;">
+                    <input type="submit" value="Cancel" name="Cancel" class="btn btn-danger px-3 fw-bold" style="width:33%;">
+                </div>
+
+                <p class='text-danger text-center fw-bold mt-2'>{{error_message}}</p>
+            </form>
+
+        </div>
+    </body>
+    {% endblock content %}
+</html>

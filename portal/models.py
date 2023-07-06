@@ -6,11 +6,11 @@ from django.db import models
 class Team(models.Model):
     team_logo = models.ImageField(upload_to='pics')
     level = models.CharField()
-    region = models.CharField()
     name = models.CharField()
-    gender = models.CharField()
+    type = models.CharField()
     email = models.EmailField()
     password = models.CharField()
+    confirm_password = models.CharField()
 
     def __str__(self):
         return self.name
