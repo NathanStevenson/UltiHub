@@ -19,13 +19,13 @@
             
             {% comment %} enctype allows files to be uploaded with the form for image data {% endcomment %}
             <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
+                {% comment %} Add the necessary labels, divs, and images around the form components and then include them here {% endcomment %}
                 {% comment %} Image Upload and Title {% endcomment %}
-                {% comment %} <div class="d-flex mt-2">
+                <div class="d-flex mt-2">
                     <div class="flex-shrink w-25 me-5">
                         <img src="/media/pics/default_prof_pic.png" alt="Default Logo" class="rounded-circle mt-4 ms-5 d-block" style="width: 75%; height: 75%;">
-                        <input type="file" class="text-center ms-4 mt-3" value="Add Team Logo" name="logo">
+                        {% csrf_token %}
+                        {{ form.team_logo }}
                     </div>
 
                     <div class="mt-5">
@@ -34,45 +34,48 @@
                 </div>
 
                 {% comment %} Input Boxes {% endcomment %}
-                {% comment %} <div class="d-flex flex-column mt-5">
+                
+                <div class="d-flex flex-column mt-5">
 
                     <div class="d-flex justify-content-evenly">
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Team Name:</p>
-                            <input type="text" name="name">
+                            {% csrf_token %}
+                            {{ form.name }}
                         </div>
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Level (College/Club):</p>
-                            <input type="text" name="level">
+                            {% csrf_token %}
+                            {{ form.level }}
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-evenly">
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Type:</p>
-                            <select class='w-100' name="type">
-                                <option>Open</option>
-                                <option>Mixed</option>
-                                <option>Women</option>
-                            </select>
+                            {% csrf_token %}
+                            {{ form.type }}
                         </div>
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Team Email:</p>
-                            <input type="email" name="email">
+                            {% csrf_token %}
+                            {{ form.email }}
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-evenly">
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Team Password:</p>
-                            <input type="password" name="password">
+                            {% csrf_token %}
+                            {{ form.password }}
                         </div>
                         <div class='w-25'>
                             <p class='mb-0 mt-2 fw-bold'>Confirm Team Password:</p>
-                            <input type="password" name="confirm_password">
+                            {% csrf_token %}
+                            {{ form.confirm_password }}
                         </div>
                     </div>
-                </div> {% endcomment %}
+                </div>
 
                 {% comment %} Submit and Cancel Buttons {% endcomment %}
                 <div class="d-flex w-50 mx-auto mt-5 justify-content-between">

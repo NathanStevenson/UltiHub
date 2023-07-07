@@ -2,6 +2,17 @@ from django import forms
 from .models import *    
 
 class AddTeamForm(forms.ModelForm):
+    # This is the way to style Model Forms because the field isnt declared directly on the form
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Team Logo Input Design
+        self.fields["team_logo"].widget.attrs.update({
+            # Can take advantage of bootstrap with this
+            "class": "text-center ms-4 mt-3",
+            })
+
+        
     
     team_logo = forms.ImageField(required=False)
     name = forms.CharField(required=False)
