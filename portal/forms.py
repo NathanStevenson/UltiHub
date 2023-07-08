@@ -19,8 +19,8 @@ class AddTeamForm(forms.ModelForm):
     level = forms.CharField(required=False)
     type = forms.CharField(required=False)
     email = forms.CharField(required=False)
-    password = forms.CharField(required=False)
-    confirm_password = forms.CharField(required=False)
+    password = forms.CharField(required=False, widget=forms.PasswordInput)
+    confirm_password = forms.CharField(required=False, widget=forms.PasswordInput)
 
     class Meta:
         model = Team

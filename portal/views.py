@@ -44,28 +44,35 @@ def addteam(request):
 
             # getting the inputs from the form
             name = request.POST.get("name")
+            level = request.POST.get("level")
+            type = request.POST.get("type")
+            email = request.POST.get("email")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
 
-            if form.is_valid():
-                # This is how you get specific values from the Django Forms
-                print(form.cleaned_data.get('name'))
-                # If both the password match and all the form has been filled out then the team is added to database
-                if (password == confirm_password):
+            # Make sure that all fields have been filled out
+            if (name != "" and level != "" and type != "" and email != "" and password != "" and confirm_password != ""):
+                if form.is_valid():
                     error_message = ""
-                    # Hashing passwords before storing them inside the database
-                    hashed_pwd = make_password(password)
-                    print(check_password(password, hashed_pwd))
-                    
-                    # add the team to the database by creating a class in Django
-                    form.save()
+                    # If both the password match and all the form has been filled out then the team is added to database
+                    if (password == confirm_password):
+                        error_message = ""
+                        # Hashing passwords before storing them inside the database
+                        hashed_pwd = make_password(password)
+                        print(check_password(password, hashed_pwd))
+                        
+                        # add the team to the database by creating a class in Django
+                        form.save()
 
-                    # after adding data to database redirect them to their own team portal
-                    return HttpResponseRedirect(reverse('portal', args=(name,)))
+                        # after adding data to database redirect them to their own team portal
+                        return HttpResponseRedirect(reverse('portal', args=(name,)))
 
-                # if the two passwords do not match then update the error message and display it so the user knows to fix these
-                else:
-                    error_message = "The passwords do not match!"
+                    # if the two passwords do not match then update the error message and display it so the user knows to fix these
+                    else:
+                        error_message = "The passwords do not match!"
+
+            else:
+                error_message = "Please fill out all of the fields before submitting!"
         
         # Logic for processing a cancelled form (Redirect them back to the default landing page)
         elif request.POST.get("Cancel"):
