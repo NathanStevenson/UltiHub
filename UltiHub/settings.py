@@ -120,7 +120,7 @@ DATABASES = {
 
 # specify where the media images will be stored
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static_cdn', 'media')
 
 
 # Password validation
