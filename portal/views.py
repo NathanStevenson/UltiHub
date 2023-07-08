@@ -14,17 +14,29 @@ from .forms import *
 def index(request):
     # initializaiton of data
     all_teams = ""
+    team_inputted = ""
+    length_input = 0
+
+    num_teams = len(Team.objects.all())
 
     # form processing for teams users are searching for
-    if request.method == 'POST':
-        team_inputted = request.POST.get('teamsearch', None)
-        all_teams = Team.objects.filter(name__startswith=team_inputted)
+    if request.method == 'GET':
+        team_inputted = request.GET.get('teamsearch')
+        # this will only be true if team_inputted is not None or an empty string
+        if (team_inputted and team_inputted != ""):
+            length_input = len(team_inputted)
+            # [0:5] splices the query set so we only see the first five filtered results
+            all_teams = Team.objects.filter(name__icontains=team_inputted)[0:5]
+        else:
+            team_inputted = ""
     
     # generating context to be sent to the frontend
     context = {
-        'all_teams': all_teams
+        'all_teams': all_teams,
+        'team_inputted': team_inputted,
+        'length_input': length_input,
+        'num_teams': num_teams,
     }
-    print(all_teams)
     # returning+rendering the template for the user
     return render(request,"portal/index.html", context)
 

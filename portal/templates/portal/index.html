@@ -86,14 +86,25 @@
         </div>
 
         {% comment %} there are many different ways you can submit forms look them up if more info needed in the future {% endcomment %}
-        <div class='text-center'>
+        <div class='text-center w-100'>
             {% comment %} any forms that use POST requests must have a csrf token for security {% endcomment %}
-            <form method="POST">
-                {% csrf_token %}
+            <form method="GET" class='mb-0'>
                 {% comment %} onchange means that as the user enters values POST requests are sent out all the time {% endcomment %}
                 {% comment %} onchange works when you click somewhere else. If you just want it for typing you can do "onkeyup"  {% endcomment %}
-                <input type="text" placeholder="Connect to your Frisbee Portal..." class='w-50 p-2 rounded-3 mt-5' name='teamsearch' onchange="this.form.submit()">
+
+                {% comment %} Autofocus means that the cursor automatically chooses the text bar and onfocus with selectionRange means that the cursor is put
+                at the very end of the current input, which it knows from the value field. Each time the user has a keyup event this form is submitted and filtering is 
+                done on the backend. This gives the search bar a modern feel as users dont need to click anything for filtering and results are displayed below {% endcomment %}
+                <input type="text" autofocus="True" onfocus="this.setSelectionRange({{length_input}},{{length_input}})" placeholder="Connect to your Frisbee Portal..." 
+                class='w-50 p-2 rounded-3 mt-5' name='teamsearch' value="{{team_inputted}}" onkeyup="this.form.submit()">
             </form>
+            <div class='w-50' style='position: absolute; left:25%;'> 
+                {% for team in all_teams %}
+                <div class='p-2 border border-dark border-3 rounded-3' style="background-color: lightgray;">
+                    <div class='fw-bold'>{{ team.name }}</div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="d-flex justify-content-evenly text-center mx-4" style="margin-top:10%">
@@ -102,7 +113,7 @@
             </div>
 
             <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
-                <h4 class='text-center'>Currently supporting n different Ultimate Firsbee Clubs from around the world!</h4>
+                <h4 class='text-center'>Currently supporting {{num_teams}} different Ultimate Frisbee Clubs from around the world!</h4>
             </div>
 
             <div class='rounded-3 shadow mx-5 p-4' style='background-color:#DBDBDB'>
