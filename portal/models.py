@@ -4,7 +4,7 @@ from django.db import models
 
 # team model
 class Team(models.Model):
-    team_logo = models.ImageField(upload_to='pics', default="/static/images/default_prof_pic.png")
+    team_logo = models.ImageField(upload_to='pics', default="pics/default_prof_pic.png")
     level = models.CharField()
     name = models.CharField()
     type = models.CharField()
