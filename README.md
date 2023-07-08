@@ -1,30 +1,40 @@
 # UltiHub
 Premier Ultimate Frisbee Management Portal built using Django, hosted by Vercel, and UI developed using Figma.
 
-## Deployment Process
-This app is deployed to production via the service Vercel following the tutorial: https://vercel.com/templates/python/django-hello-world
+## Important Links
+* Website URL: https://ulti-hub.vercel.app/
+* Figma Design: https://www.figma.com/file/WfzGyg4ZP3vmL1oQzRNcdo/UltiHub-Designs?type=design&node-id=0-1&t=BddygqAfsEESea1W-0
 
-### Important Notes:
+## DevOps Information
+* Deployed via Vercel
+* Database support via Railway
+* Coded in Django
+* All dependencies needed are inside requirements.txt
+
+### Deployment Helpers
+* Vercel Deployment Tutorial: https://vercel.com/templates/python/django-hello-world
 * Make sure that the "UltiHub" project is the root directory of the GitHub repo. Originally had two other folders and the deployment did not work.
 * Include the vercel.json file, and make the proper modifications to UltiHub/wsgi.py and UltiHub/settings.py to support the Vercel development.
-* For security purposes the database credentials have been hidden inside the .env file, which is the industry standard for websites in production.
+
+## Security Features
+* UltiHub uses Google Login for User Authentication
+* Each team creates a password so only they can access their portal
+* Team passwords are hashed and their hashes are what is stored in the database
+* All forms are protected against Cross Site Request Forgeries
+* Deployment Website is hosted on https
+* All secret information for the database cannot be seen publicly on the GitHub
 
 #### Want to Contribute:
 Feel free to fork the repository and creating pull requests. Can be anything from code or ideas in the "Features" section below.
 
-## Important Links
-* Website URL: __blank__
-* Figma Design: https://www.figma.com/file/WfzGyg4ZP3vmL1oQzRNcdo/UltiHub-Designs?type=design&node-id=0-1&t=BddygqAfsEESea1W-0
-* PostGresSQL Database: __blank__
-
 ### Future Plans
 - [x] Design the UI using Figma.
 
-- [ ] Host a default Django app on Vercel with hot reloading
+- [x] Host a default Django app on Vercel with hot reloading
 
 - [ ] Figure out how to datascrape USAU (namely how to convert the teamIDs into usuable team names)
 
-- [ ] Begin coding the project. Stages described below:
+- [x] Begin coding the project. Stages described below:
     - Code the default landing page (has our logo and asks you to search for your team)
     - Code the process of adding a new team via a form. Necessary stuff (team name, point of contacts email, team password, team logo)
     - Code the default landing home page for the team
