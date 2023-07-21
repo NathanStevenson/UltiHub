@@ -28,4 +28,4 @@ class User(models.Model):
     team = models.CharField()
 
     def __str__(self):
-        return self.id + ": " + self.name 
+        return str(self.id) + ": " + self.name 

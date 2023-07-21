@@ -180,7 +180,7 @@ AUTHENTICATION_BACKENDS = {
 }
 
 # upon login where do you want the users to be redirected to
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/adduser/"
 
 # upon logout where do you want the users to be redirected to
 LOGOUT_REDIRECT_URL = "/"

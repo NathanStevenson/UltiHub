@@ -10,7 +10,7 @@ from .forms import *
 # to grab all of any model you can do: Model.objects.all() 
 # if you just want to grab a subset you can do: Model.objects.filter() and then pass in arguments to filter by and ways you want to filter
 
-# view for the main loading screen
+#                                                  MAIN HOME PAGE VIEW
 def index(request):
     # initializaiton of data
     all_teams = ""
@@ -42,7 +42,25 @@ def index(request):
 
 
 
-# view for adding new teams to our database
+#                                                               ADD USER INFORMATION POST GOOGLE LOGIN
+def adduser(request):
+    # after google login this will see if the user has already logged in. If they havent then we will begin to build a small default 
+    # profile for the user that they can edit/add more stuff to on their own profile page
+    try:
+        # if the user has been created then just get it and do nothing
+        user = User.objects.get(id=request.user.id, name=str(request.user.first_name + " " + request.user.last_name))
+        return HttpResponseRedirect(reverse('index'))
+    
+    # if the user has not been created then create a default user and then return to index
+    except:
+        newUser = User(id=request.user.id, name=str(request.user.first_name + " " + request.user.last_name), year="", fav_throw="", 
+                       role="", number=0, email=request.user.email, profile_img="", team="")
+        newUser.save()
+        return HttpResponseRedirect(reverse('index'))
+    
+
+
+#                                                                   ADD TEAM TO DATABASE VIEW
 def addteam(request):
     # initialization of data
     error_message = ""
@@ -71,10 +89,20 @@ def addteam(request):
                         error_message = ""
                         # Hashing passwords before storing them inside the database
                         hashed_pwd = make_password(password)
-                        print(check_password(password, hashed_pwd))
+                        # check_password(password, hashed_pwd)
+                        new_team = Team()
                         
-                        # add the team to the database by creating a class in Django
-                        form.save()
+                        # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
+                        # so that users dont accidentally type the wrong password. We do not store the confirm password though
+                        new_team.team_logo = form.cleaned_data['team_logo']
+                        new_team.name = form.cleaned_data['name']
+                        new_team.level = form.cleaned_data['level']
+                        new_team.type = form.cleaned_data['type']
+                        new_team.password = hashed_pwd
+                        new_team.confirm_password = ""
+                        new_team.email = form.cleaned_data['email']
+
+                        new_team.save()
 
                         # after adding data to database redirect them to their own team portal
                         return HttpResponseRedirect(reverse('portal', args=(name,)))
@@ -105,7 +133,7 @@ def addteam(request):
     return render(request,"portal/addteam.html", context)
 
 
-# this handles the backend logic for the portal main page
+#                                                               HOME PORTAL FOR TEAMS VIEW
 def portal(request, name):
     # initialization of the data
     team = ""
@@ -118,3 +146,27 @@ def portal(request, name):
         'team': team,
     }
     return render(request,"portal/portal.html", context)
+
+
+#                                                               SIGN INTO TEAM PORTAL VIEW
+def team_login(request, name):
+    # Initialization of data
+    team = ""
+    logged_in_msg = ""
+    # get the first team with that name (if names are not unique we may need to process by IDs)
+    team = Team.objects.filter(name=name).first()
+
+    if (request.user.is_authenticated):
+        logged_in_msg = ""
+    
+    else:
+        logged_in_msg = "Before logging into your teams portal you must be signed in!"
+
+    # generating context for the front end
+    context = {
+        'name': name,
+        'team': team,
+        'logged_in_msg': logged_in_msg,
+    }
+
+    return render(request, "portal/team_login.html", context)
