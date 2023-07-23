@@ -1,2 +1,23 @@
-<h1>{{team.name}}</h1>
-<img src="{{ team.team_logo.url }}" alt="Team Logo">
+{% extends 'portal/index.html' %}
+{% comment %} this copies the default header bar for users who havent joined a portal yet {% endcomment %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        <style>
+
+        </style>
+    </head>
+    {% block content %}
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <h1>{{team.name}}</h1>
+        <img src="{{ team.team_logo.url }}" alt="Team Logo">
+    </body>
+    {% endblock content %}
+
+</html>

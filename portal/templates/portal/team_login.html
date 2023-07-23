@@ -31,6 +31,8 @@
                         <input type='password' class='rounded-2 ms-3 w-50' name='password'/>
                     </div>
                 </div>
+                
+                <div class='text-danger text-center fw-bold'>{{ wrong_password }}</div>
 
                 <div class="d-flex w-50 mx-auto justify-content-between" style='margin-top: 4.7%;'>
                     {% comment %} Django views are able to grab the values in the templates by their "name" {% endcomment %}

@@ -89,7 +89,6 @@ def addteam(request):
                         error_message = ""
                         # Hashing passwords before storing them inside the database
                         hashed_pwd = make_password(password)
-                        # check_password(password, hashed_pwd)
                         new_team = Team()
                         
                         # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
@@ -104,8 +103,8 @@ def addteam(request):
 
                         new_team.save()
 
-                        # after adding data to database redirect them to their own team portal
-                        return HttpResponseRedirect(reverse('portal', args=(name,)))
+                        # after adding data to database redirect them to their teams login page so they can access their newly created team
+                        return HttpResponseRedirect(reverse('login', args=(name,)))
 
                     # if the two passwords do not match then update the error message and display it so the user knows to fix these
                     else:
@@ -137,15 +136,36 @@ def addteam(request):
 def portal(request, name):
     # initialization of the data
     team = ""
-    # get the first team with that name (if names are not unique we may need to process by IDs)
-    team = Team.objects.filter(name=name).first()
-    print(team)
-    # generating context for front end
-    context = {
-        'name': name,
-        'team': team,
-    }
-    return render(request,"portal/portal.html", context)
+    team = Team.objects.get(name=name)
+    # User must be authenticated to log into their team portal so we know who they are
+    if request.user.is_authenticated:
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # if the user is allowed to view this team
+        if user_allowed:       
+            # generating context for front end
+            context = {
+                'name': name,
+                'team': team,
+            }
+            return render(request,"portal/portal.html", context)
+        
+        # if the user is not allowed
+        if (not user_allowed):
+            context = {
+                'name':name,
+            }
+
+            return render(request,"portal/unauthorized.html", context)
+    
+    # If not autheticated send them to error page stating that they need to sign in in order to continue
+    if (not request.user.is_authenticated):
+
+        context = {
+
+        }
+
+        return render(request, "portal/signin.html", context)
 
 
 #                                                               SIGN INTO TEAM PORTAL VIEW
@@ -153,11 +173,51 @@ def team_login(request, name):
     # Initialization of data
     team = ""
     logged_in_msg = ""
+    wrong_password = ""
     # get the first team with that name (if names are not unique we may need to process by IDs)
     team = Team.objects.filter(name=name).first()
 
     if (request.user.is_authenticated):
         logged_in_msg = ""
+        wrong_password = ""
+        # grab the user who is currently using the site so after logging in we can successfully add that team to their allowed teams so no more logging in
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+
+        # if this user has already signed in before and they have been allowed to view the team then just redirect them to the teams portal to simplify login
+        is_authorized = helper_isauthorized(request, team)
+        if is_authorized:
+            return HttpResponseRedirect(reverse('portal', args=(name,)))
+
+        # on form submission
+        if request.method == "POST":
+            # if the user is submitting the form then process the username and password and then redirect if password is right
+            if request.POST.get("Submit"):
+                username = request.POST.get("username")
+                password = request.POST.get("password")
+
+                # update the users username if they choose to be called something else when entering the portal
+                user = User.objects.get(id=request.user.id)
+                user.name = username
+                user.save()
+
+                # check if the password the user inputted is the same as the hashed teams password
+                hashed_pwd = team.password
+                matches = check_password(password, hashed_pwd)
+                
+                # if password matches then take the user to their portal
+                if matches:
+                    # log in will be complete once we add a step where user is authorized to view the team
+                    activeUser.teams_allowed.add(team)
+                    return HttpResponseRedirect(reverse('portal', args=(name,)))
+                
+                else:
+                    wrong_password = "Password does not match."
+
+
+            # if the user is cancelling the form then redirect them back to the index page to continue their search
+            if request.POST.get("Cancel"):
+                return HttpResponseRedirect(reverse('index'))
     
     else:
         logged_in_msg = "Before logging into your teams portal you must be signed in!"
@@ -167,6 +227,19 @@ def team_login(request, name):
         'name': name,
         'team': team,
         'logged_in_msg': logged_in_msg,
+        'wrong_password': wrong_password,
     }
 
     return render(request, "portal/team_login.html", context)
+
+
+
+#                                                                               HELPER FUNCTIONS
+def helper_isauthorized(request, team):
+    # this function takes a request and a given team name and returns a bool to decide whether the user can view
+    # classified team information
+    userID = request.user.id
+    activeUser = User.objects.get(id=userID)
+    user_allowed = (team in activeUser.teams_allowed.all())
+
+    return user_allowed
