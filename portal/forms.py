@@ -1,6 +1,7 @@
 from django import forms
 from .models import *    
 
+# form for adding a new team to our database. used inside team_login.html
 class AddTeamForm(forms.ModelForm):
     # This is the way to style Model Forms because the field isnt declared directly on the form
     def __init__(self, *args, **kwargs):
@@ -25,3 +26,15 @@ class AddTeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ['team_logo', 'name', 'level', 'type', 'email', 'password', 'confirm_password']
+
+
+# model form for adding an event. used inside of add_event.html
+class addEventForm(forms.ModelForm):
+
+    date = forms.DateField(required=False)
+    event_name = forms.CharField(required=False)
+    notes = forms.CharField(required=False)
+
+    class Meta:
+        model = Event
+        fields = ['date', 'event_name', 'notes']

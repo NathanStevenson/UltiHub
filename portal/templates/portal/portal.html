@@ -1,6 +1,3 @@
-{% extends 'portal/index.html' %}
-{% comment %} this copies the default header bar for users who havent joined a portal yet {% endcomment %}
-
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -9,15 +6,108 @@
         {% load bootstrap5 %}
         {% bootstrap_css %}
         {% bootstrap_javascript %}
-        <style>
+        {% load socialaccount %}
 
+        <title>UltiHub</title>
+        <link rel="icon" type="image/x-icon" href="/media/pics/UH_Brand.png">
+
+        <style>
+            #signin {
+                position: relative; 
+                text-decoration: none; 
+                cursor: pointer; 
+                width: 100%;
+                color: gray;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .dropdownItem {
+                text-align: center;
+                color: black;
+                font-weight: 500;
+                text-decoration: none; 
+            }
+
+            #ddItem {
+                text-align: center;
+            }
+
+            #ddItem:hover {
+                background: lightgray;
+            }
         </style>
     </head>
-    {% block content %}
-    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
-        <h1>{{team.name}}</h1>
-        <img src="{{ team.team_logo.url }}" alt="Team Logo">
-    </body>
-    {% endblock content %}
 
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div id="header" style="background-color:#404040; height: 15%">
+            <div class="d-inline-block mt-3 ms-4 float-start">
+                <img src="/media/pics/UH_Brand.png" class="rounded-circle border border-dark border-2" alt="UltiHub Logo" style="height:70%">
+            </div>
+
+            <div class="d-inline-block ms-4" style="margin-top:2.5%">
+                <h1 class='text-white fw-bold'>UltiHub</h1>
+            </div>
+
+            <div class="d-inline-block ms-5" style='width: 60%;'>
+                <div class='ms-5 mt-3 d-flex justify-content-evenly'>
+                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}">Home</a>
+                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/team_logistics/">Team Logistics</a>
+                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/playbook/">Playbook</a>
+                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/players/">Players</a>
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+                <div class="d-inline-block float-end me-4 dropdown position-relative">
+                    <button class="btn dropdown-toggle position-relative mt-4 rounded-circle" type="button" id="dropdownMenuButton1" 
+                    data-bs-toggle="dropdown" aria-expanded="false" style="height: 60%; cursor:pointer; color:white; width:75%;">
+                        <img src="{{user.socialaccount_set.all.0.extra_data.picture}}" 
+                        alt="Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}"
+                        class="position-relative" id="profile"
+                        style="height: 100%; border-radius: 50%;"/>
+                    </button>
+                    <ul class="dropdown-menu border border-3 border-dark" style="position: relative; width: 200%">
+                        <li class="fw-bold text-center px-2">Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}!</li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id='ddItem'><a class="dropdownItem" href="profile/{{user.id}}/">Profile</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="customize/">Customize</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="contact/">Contact</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="about/">About</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/accounts/logout/">Logout</a></li>
+                    </ul>
+                </div>
+            {% else %}
+            <div class="d-inline-block float-end pt-3 mt-4 me-5 position-relative">
+                <a href="{% provider_login_url 'google' %}" id="signin">Sign In</a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% block content %}
+        <div class='d-flex'>
+            <div class='w-25 d-flex flex-column ms-5'>
+                <img src="{{ team.team_logo.url }}" alt="Team Logo" class='mx-auto mt-4 shadow' style='border-radius:50%; width:75%;'>
+                <div class='fw-bold fs-1 text-white text-center mt-3'>{{ team.name }}</div>
+                <div class='fw-bold fs-5 text-white text-center mt-2'>{{ team.type }} {{ team.level }} Ultimate Club</div>
+
+                <div class='w-100 rounded rounded-3 shadow p-2 mt-4 mx-auto' style="background-color:lightgray;">
+                    <div class='fw-bold ms-1 pb-2'>Captains:</div>
+                    <div class='fw-bold ms-1 pb-2'>Coaches:</div>
+                    <div class='fw-bold ms-1 pb-2'>Record:</div>    
+                </div>
+            </div>
+
+            <div class='w-50 mt-5 mx-auto'>
+                <div class='d-flex justify-content-between border-bottom border-3 border-dark pb-3'>
+                    <div class='fw-bold fs-5 text-white'>{{ month }}/{{ day }}/{{ year }}</div>
+                    <div class='fw-bold fs-5 text-white'>Upcoming Events</div>
+                    <a href="/portal/{{ team.name }}/addevent/" class='d-block fw-bold fs-5'>Add Event</a>
+                </div>
+            </div>
+        </div>
+        {% endblock content %}
+
+    </body>
 </html>

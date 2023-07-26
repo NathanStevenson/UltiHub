@@ -13,4 +13,7 @@ urlpatterns = [
     path('<str:name>/login/', views.team_login, name="login"),
     # After google login redirected here so we can begin to build our profile for you
     path('adduser/', views.adduser, name="adduser"),
+    # allows teams to add their custom events to their portal
+    path('portal/<str:name>/addevent/', views.add_event, name="add_event"),
+    
 ]

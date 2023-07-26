@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import logout
-from datetime import datetime
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from .models import *
@@ -137,6 +137,14 @@ def portal(request, name):
     # initialization of the data
     team = ""
     team = Team.objects.get(name=name)
+
+    # get the current date and parse it into day/month/year
+    today = str(datetime.date.today())
+    today = today.split("-")
+    day = today[2]
+    month = today[1]
+    year = today[0]
+
     # User must be authenticated to log into their team portal so we know who they are
     if request.user.is_authenticated:
         # call this to determine if the user is allowed to view sensitive team info
@@ -147,6 +155,9 @@ def portal(request, name):
             context = {
                 'name': name,
                 'team': team,
+                'day': day,
+                'month': month,
+                'year': year,
             }
             return render(request,"portal/portal.html", context)
         
@@ -232,6 +243,23 @@ def team_login(request, name):
 
     return render(request, "portal/team_login.html", context)
 
+
+
+#                                                                      ADDING UPCOMING TEAM EVENTS VIEW
+def add_event(request, name):
+    # initializing all data
+    form = addEventForm()
+
+    # processing logic
+    if request.method == "POST":
+        print('form submit')
+
+    # generating context for the front end
+    context = {
+        'form': form,
+    }
+
+    return render(request, "portal/add_event.html", context)
 
 
 #                                                                               HELPER FUNCTIONS

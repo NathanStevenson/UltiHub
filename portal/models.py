@@ -2,6 +2,16 @@ from django.db import models
 
 # Create your models here.
 
+# Event model (stores all team events in a organized manner)
+class Event(models.Model):
+    date = models.DateField()
+    event_name = models.CharField()
+    notes = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.event_name
+
+
 # team model
 class Team(models.Model):
     team_logo = models.ImageField(upload_to='pics', default="pics/default_prof_pic.png")
@@ -20,9 +30,13 @@ class Team(models.Model):
     players = models.ManyToManyField('User', related_name='players')
     admin = models.ManyToManyField('User', related_name='admin')
 
+    # teams can have many events want the same structure
+    team_events = models.ManyToManyField(Event)
+
     def __str__(self):
         return self.name
     
+
 # User model (stores all personal info)
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -39,4 +53,4 @@ class User(models.Model):
     teams_allowed = models.ManyToManyField(Team, related_name='teams_allowed')
 
     def __str__(self):
-        return str(self.id) + ": " + self.name 
+        return str(self.id) + ": " + self.name
