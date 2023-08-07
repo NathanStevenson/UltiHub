@@ -15,26 +15,26 @@
 
     {% block content %}
     <body class="vh-100 vw-100" style="background-color:#2E4E6F">
-        <div class="w-50 h-75 mx-auto border border-5 border-dark shadow" style="background-color: lightgray; margin-top: 2.5%; border-radius: 5%;">
+        <div class="w-50 h-50 mx-auto border border-5 border-dark shadow" style="background-color: lightgray; margin-top: 2.5%; border-radius: 5%;">
             {% comment %} enctype allows files to be uploaded with the form for image data {% endcomment %}
             <form method="POST">
                 <div class='fw-bold fs-2 text-center'>Add New Event</div>
-
+                <div class='fw-bold text-center text-danger'>{{ error_message }}</div>
                 <div class='w-75 mx-auto d-flex flex-column'>
-                    <p>Event Date</p>
+                    <p class='fw-bold mt-2 mb-1'>Event Date</p>
                     {% csrf_token %}
                     {{ form.date }}
 
-                    <p>Event Name</p>
+                    <p class='fw-bold mt-2 mb-1'>Event Name</p>
                     {% csrf_token %}
                     {{ form.event_name }}
 
-                    <p>Notes</p>
+                    <p class='fw-bold mt-2 mb-1'>Notes</p>
                     {% csrf_token %}
-                    {{ form.date }}
+                    {{ form.notes }}
                 </div>
 
-                <div class="d-flex w-50 mx-auto mt-5 justify-content-between">
+                <div class="d-flex w-50 mx-auto mt-3 justify-content-between">
                     {% comment %} Django views are able to grab the values in the templates by their "name" {% endcomment %}
                     <input type="submit" value="Submit" name="Submit" class="btn btn-primary px-3 fw-bold" style="width:33%;">
                     <input type="submit" value="Cancel" name="Cancel" class="btn btn-danger px-3 fw-bold" style="width:33%;">

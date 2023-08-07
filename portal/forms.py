@@ -30,11 +30,9 @@ class AddTeamForm(forms.ModelForm):
 
 # model form for adding an event. used inside of add_event.html
 class addEventForm(forms.ModelForm):
-
-    date = forms.DateField(required=False)
+    date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
     event_name = forms.CharField(required=False)
     notes = forms.CharField(required=False)
-
     class Meta:
         model = Event
         fields = ['date', 'event_name', 'notes']

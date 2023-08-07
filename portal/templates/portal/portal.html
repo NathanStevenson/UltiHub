@@ -46,15 +46,15 @@
             </div>
 
             <div class="d-inline-block ms-4" style="margin-top:2.5%">
-                <h1 class='text-white fw-bold'>UltiHub</h1>
+                <a href='/' class='text-white fw-bold fs-1 d-block' style='text-decoration: none;'>UltiHub</a>
             </div>
 
             <div class="d-inline-block ms-5" style='width: 60%;'>
                 <div class='ms-5 mt-3 d-flex justify-content-evenly'>
-                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}">Home</a>
-                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/team_logistics/">Team Logistics</a>
-                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/playbook/">Playbook</a>
-                    <a class="text-white fw-bold d-block fs-4" href="portal/{{name}}/players/">Players</a>
+                    <a class="text-white fw-bold d-block fs-4" href="/portal/{{name}}/">Home</a>
+                    <a class="text-white fw-bold d-block fs-4" href="/portal/{{name}}/team_logistics/">Team Logistics</a>
+                    <a class="text-white fw-bold d-block fs-4" href="/portal/{{name}}/playbook/">Playbook</a>
+                    <a class="text-white fw-bold d-block fs-4" href="/portal/{{name}}/players/">Players</a>
                 </div>
             </div>
 
@@ -70,10 +70,10 @@
                     <ul class="dropdown-menu border border-3 border-dark" style="position: relative; width: 200%">
                         <li class="fw-bold text-center px-2">Welcome, {{user.socialaccount_set.all.0.extra_data.given_name}}!</li>
                         <li><hr class="dropdown-divider"></li>
-                        <li id='ddItem'><a class="dropdownItem" href="profile/{{user.id}}/">Profile</a></li>
-                        <li id='ddItem'><a class="dropdownItem" href="customize/">Customize</a></li>
-                        <li id='ddItem'><a class="dropdownItem" href="contact/">Contact</a></li>
-                        <li id='ddItem'><a class="dropdownItem" href="about/">About</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/profile/{{user.id}}/">Profile</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/customize/">Customize</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/contact/">Contact</a></li>
+                        <li id='ddItem'><a class="dropdownItem" href="/about/">About</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li id='ddItem'><a class="dropdownItem" href="/accounts/logout/">Logout</a></li>
                     </ul>
@@ -105,6 +105,22 @@
                     <div class='fw-bold fs-5 text-white'>Upcoming Events</div>
                     <a href="/portal/{{ team.name }}/addevent/" class='d-block fw-bold fs-5'>Add Event</a>
                 </div>
+
+                {% for event in team_events %}
+                    {% if forloop.counter|divisibleby:2 %}
+                        <div style='background-color: #002653;' class='w-100 d-flex justify-content-between border border-dark border-2'>
+                            <div class='text-white fw-bold p-3'>{{ event.date }}</div>
+                            <div class='text-white fw-bold p-3'>{{ event.event_name }}</div>
+                            <div class='text-white p-3'>{{ event.notes }}</div>
+                        </div>
+                    {% else %}
+                        <div style='background-color: #2E4E6F;' class='w-100 d-flex justify-content-between border border-dark border-2'>
+                            <div class='text-white fw-bold p-3'>{{ event.date }}</div>
+                            <div class='text-white fw-bold p-3'>{{ event.event_name }}</div>
+                            <div class='text-white p-3'>{{ event.notes }}</div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
         {% endblock content %}

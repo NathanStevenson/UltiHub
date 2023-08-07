@@ -136,6 +136,7 @@ def addteam(request):
 def portal(request, name):
     # initialization of the data
     team = ""
+    team_events = ""
     team = Team.objects.get(name=name)
 
     # get the current date and parse it into day/month/year
@@ -144,6 +145,7 @@ def portal(request, name):
     day = today[2]
     month = today[1]
     year = today[0]
+    team_events = team.team_events.all()
 
     # User must be authenticated to log into their team portal so we know who they are
     if request.user.is_authenticated:
@@ -158,6 +160,7 @@ def portal(request, name):
                 'day': day,
                 'month': month,
                 'year': year,
+                'team_events': team_events,
             }
             return render(request,"portal/portal.html", context)
         
@@ -219,7 +222,7 @@ def team_login(request, name):
                 # if password matches then take the user to their portal
                 if matches:
                     # log in will be complete once we add a step where user is authorized to view the team
-                    activeUser.teams_allowed.add(team)
+                    team.players.add(activeUser)
                     return HttpResponseRedirect(reverse('portal', args=(name,)))
                 
                 else:
@@ -249,14 +252,41 @@ def team_login(request, name):
 def add_event(request, name):
     # initializing all data
     form = addEventForm()
+    error_message = ""
 
     # processing logic
     if request.method == "POST":
-        print('form submit')
+        # if the form is being submitted
+        if request.POST.get("Submit"):
+            # set the form to have the current POST data
+            form = AddTeamForm(request.POST)
+            # getting the form inputs
+            date = request.POST.get('date')
+            event_name = request.POST.get('event_name')
+            notes = request.POST.get('notes')
+            # make sure none of the values are blank if they are then update error message
+            if (date != "" and event_name != "" and notes != ""):
+                # if the form is valid then save it and send the user back to their portal page
+                error_message = ""
+                if form.is_valid():
+                    newEvent = Event(date=date, event_name=event_name, notes=notes)
+                    newEvent.save()
+                    team = Team.objects.get(name=name)
+                    team.team_events.add(newEvent)
+                    return HttpResponseRedirect(reverse('portal', args=(name,)))
+            # if any of the fields have a blank value
+            else:
+                error_message = "One of your fields is blank. Please fill out all fields!"
+
+        # if the form is cancelled then send the user back to their portal page
+        elif request.POST.get("Cancel"):
+            return HttpResponseRedirect(reverse('portal', args=(name,)))
+
 
     # generating context for the front end
     context = {
         'form': form,
+        'error_message': error_message,
     }
 
     return render(request, "portal/add_event.html", context)
@@ -265,9 +295,11 @@ def add_event(request, name):
 #                                                                               HELPER FUNCTIONS
 def helper_isauthorized(request, team):
     # this function takes a request and a given team name and returns a bool to decide whether the user can view
-    # classified team information
     userID = request.user.id
     activeUser = User.objects.get(id=userID)
-    user_allowed = (team in activeUser.teams_allowed.all())
+    active_team = Team.objects.get(name=team)
+
+    # see if the user making the request is in the players allowed for the given team
+    user_allowed = (activeUser in active_team.players.all())
 
     return user_allowed
