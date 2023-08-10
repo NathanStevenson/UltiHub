@@ -15,5 +15,9 @@ urlpatterns = [
     path('adduser/', views.adduser, name="adduser"),
     # allows teams to add their custom events to their portal
     path('portal/<str:name>/addevent/', views.add_event, name="add_event"),
+    # displays profile information about a current user
+    path('profile/', views.profile, name="profile"),
+    # allows users to edit/add details to their user profile
+    path('edit_profile/', views.edit_profile, name="edit_profile"),
     
 ]

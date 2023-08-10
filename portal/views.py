@@ -48,7 +48,7 @@ def adduser(request):
     # profile for the user that they can edit/add more stuff to on their own profile page
     try:
         # if the user has been created then just get it and do nothing
-        user = User.objects.get(id=request.user.id, name=str(request.user.first_name + " " + request.user.last_name))
+        user = User.objects.get(id=request.user.id)
         return HttpResponseRedirect(reverse('index'))
     
     # if the user has not been created then create a default user and then return to index
@@ -131,6 +131,93 @@ def addteam(request):
     # rendering the page for the user
     return render(request,"portal/addteam.html", context)
 
+
+#                                                              DISPLAY PROFILE INFO VIEW
+def profile(request):
+    # account for whether or not the user is authenticated so we know who they are
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        activeUser = User.objects.get(id=user_id)
+        # account for whether the user is already logged into a team portal or not so we know what the navbar should display
+
+        # generating context for front-end
+        context = {
+            'activeUser': activeUser,
+        }
+        return render(request,"portal/profile.html", context)
+
+    # the user is not logged into anything and is trying to access their profile
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
+
+
+#                                                                EDIT PROFILE INFO VIEW
+def edit_profile(request):
+    # initialization of data
+    form = UserInfoForm()
+    error_msg = ""
+
+    # if the user has logged in
+    if request.user.is_authenticated:
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        form = UserInfoForm(instance=activeUser)
+
+        if request.method == "POST":
+            if request.POST.get("Submit"):
+                # get the values upon submission
+                name = request.POST.get("name")
+                year = request.POST.get("year")
+                fav_throw = request.POST.get("fav_throw")
+                email = request.POST.get("email")
+                number = request.POST.get("number")
+                team = request.POST.get("team")
+
+                form = UserInfoForm(request.POST, request.FILES)
+                if form.is_valid():
+                    if name != "" and year != "" and fav_throw != "" and email != "" and number != "" and team != "":
+                        error_msg = ""
+
+                        activeUser.name = form.cleaned_data['name']
+                        activeUser.year = form.cleaned_data['year']
+                        activeUser.fav_throw = form.cleaned_data['fav_throw']
+                        activeUser.email = form.cleaned_data['email']
+                        activeUser.number = form.cleaned_data['number']
+                        activeUser.team = form.cleaned_data['team']
+
+                        # if the user uploads a new profile image then change it
+                        if form.cleaned_data['profile_img']:
+                            print('here')
+                            activeUser.profile_img = form.cleaned_data['profile_img']
+
+                        # otherwise keep the profile image the same
+
+                        activeUser.save()
+
+                        # send the user back to their profile
+                        return HttpResponseRedirect(reverse('profile'))
+
+                    else:
+                        error_msg = "All fields must be filled out"
+
+            # if cancel is hit take them back to where they came from (index for rn) 
+            elif request.POST.get("Cancel"):
+                return HttpResponseRedirect(reverse('index'))
+
+
+        # generating context for front-end
+        context = {
+            'form': form,
+            'activeUser': activeUser,
+            'error_message': error_msg,
+        }
+        return render(request,"portal/edit_profile.html", context)
+    
+    # if the user has not logged in then send them to the sign in page
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 #                                                               HOME PORTAL FOR TEAMS VIEW
 def portal(request, name):
