@@ -379,6 +379,20 @@ def add_event(request, name):
     return render(request, "portal/add_event.html", context)
 
 
+#                                                           CONTACT VIEW PAGE
+def contact(request):
+
+    context = {}
+    return render(request, 'portal/contact.html', context)
+
+
+#                                                           ABOUT VIEW PAGE
+def about(request):
+    
+    context = {}
+    return render(request, 'portal/about.html', context)
+
+
 #                                                                               HELPER FUNCTIONS
 def helper_isauthorized(request, team):
     # this function takes a request and a given team name and returns a bool to decide whether the user can view

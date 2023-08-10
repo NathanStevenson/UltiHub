@@ -1,0 +1,32 @@
+{% extends 'portal/index.html' %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        {% load socialaccount %}
+        <style>
+
+        </style>
+    </head>
+    {% block content %}
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div class='w-50 border border-dark border-2 shadow mx-auto mt-4' style='background-color: lightgray; border-radius: 30px; height: 50%;'>
+            <div class='text-center fw-bold fs-1 mt-4'>Contact Us</div>
+
+            <div class='fs-5 w-75 mx-auto text-center mt-4'>
+                This website is still in beta and we appreciate all feedback!
+                <br>If you are reporting a bug you discovered 
+                <a href="mailto:nts7bcj@virginia.edu?subject=Bug Report">Click Here</a>
+                <br>If you are writing to us about a new feature you would like to see added 
+                <a href="mailto:nts7bcj@virginia.edu?subject=New Feature">Click Here</a>
+            </div>
+
+            <div class='fw-bold fs-3 text-center mt-4'>Thank You!</div>
+        </div>
+    </body>
+    {% endblock content %}
+</html>

@@ -1,0 +1,40 @@
+{% extends 'portal/index.html' %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        {% load socialaccount %}
+        <style>
+
+        </style>
+    </head>
+    {% block content %}
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div class='border border-dark border-2 shadow mx-auto mt-4' style='background-color: lightgray; border-radius: 30px; height: 70%; width: 65%;'>
+            
+            <div class='d-flex justify-content-between mx-3 mt-3'>
+                <div>
+                    <img src="/media/pics/UH_Brand.png" class="shadow border border-dark border-2" alt="UltiHub Logo" style="width: 135px; height: 135px; border-radius: 50%;">
+                </div>
+                <div class='text-center fw-bold fs-1 mt-4'>About Me</div>
+                <div>
+                    <img src="/media/pics/myself.png" class="shadow border border-dark border-2" alt="UltiHub Logo" style="width: 135px; height: 135px; border-radius: 50%;">
+                </div>
+            </div>
+
+            <div class='w-75 mx-auto text-center mt-4 p-3 rounded-3'>
+                My name is Nathan Stevenson and I am the founder of UltiHub. I am currently a senior studying Computer Science at the University
+                of Virginia. I am also a member of Virginia Night Train, which is the College Men's team at UVA. After two years of playing ultimate
+                frisbee I have been a part of many club and college teams and noticed that there is a need for an organized and centralized platform
+                where team leadership could easily update and relay information to their teams, which is why I created UltiHub. My goal is for this platform 
+                to be used across many teams, so if there is a feature not currently included that you would like to see please reach out to me via our
+                <a href='/contact/'>Contact Page</a>. Thank you for using this platform!
+            </div>
+        </div> 
+    </body>
+    {% endblock content %}
+</html>
