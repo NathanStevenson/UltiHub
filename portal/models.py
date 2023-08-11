@@ -11,6 +11,15 @@ class Event(models.Model):
     def __str__(self):
         return self.event_name
     
+# model to allow teams to customize their portal with new features
+class portalOptions(models.Model):
+    # by default every team comes with team logistics and practice plans. You can also enable film room and the discussion board
+    # in the future we will add new features to these panels that you can either allow or not
+    name = models.CharField()
+
+    def __str__(self):
+        return self.name
+    
     
 # User model (stores all personal info)
 class User(models.Model):
@@ -23,6 +32,10 @@ class User(models.Model):
     email = models.EmailField()
     profile_img = models.ImageField(upload_to='pics')
     team = models.CharField()
+
+    # have the player know which teams they are allowed to access in order to efficiently access them via the dropdown menu
+    # team is in quotes because it has not been defined yet so this allows Django to have circular redundancies with models
+    teams_allowed = models.ManyToManyField('Team', related_name='teams_allowed')
 
     def __str__(self):
         return str(self.id) + ": " + self.name
@@ -48,6 +61,9 @@ class Team(models.Model):
 
     # teams can have many events want the same structure
     team_events = models.ManyToManyField(Event)
+
+    # allow individual teams to have custom portal control
+    portal_options = models.ManyToManyField(portalOptions)
 
     def __str__(self):
         return self.name

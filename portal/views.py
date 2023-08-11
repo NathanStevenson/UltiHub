@@ -64,72 +64,96 @@ def adduser(request):
 def addteam(request):
     # initialization of data
     error_message = ""
-    # form processing for the new team
-    if request.method == "POST":
-        form = AddTeamForm(request.POST, request.FILES)
+    # user must be logged into their account to add a team because they become the first admin
+    if request.user.is_authenticated:
+        # gather the user who is creating the account so that we can make them team admin
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        # form processing for the new team
+        if request.method == "POST":
+            form = AddTeamForm(request.POST, request.FILES)
 
-        # Logic for processing a new team (Eventually cross reference USAU, add model, redirect them to portal page)
-        if request.POST.get("Submit"):
-            print("Submitting")
+            # Logic for processing a new team (Eventually cross reference USAU, add model, redirect them to portal page)
+            if request.POST.get("Submit"):
+                print("Submitting")
 
-            # getting the inputs from the form
-            name = request.POST.get("name")
-            level = request.POST.get("level")
-            type = request.POST.get("type")
-            email = request.POST.get("email")
-            password = request.POST.get("password")
-            confirm_password = request.POST.get("confirm_password")
+                # getting the inputs from the form
+                name = request.POST.get("name")
+                level = request.POST.get("level")
+                type = request.POST.get("type")
+                email = request.POST.get("email")
+                password = request.POST.get("password")
+                confirm_password = request.POST.get("confirm_password")
 
-            # Make sure that all fields have been filled out
-            if (name != "" and level != "" and type != "" and email != "" and password != "" and confirm_password != ""):
-                if form.is_valid():
-                    error_message = ""
-                    # If both the password match and all the form has been filled out then the team is added to database
-                    if (password == confirm_password):
+                # Make sure that all fields have been filled out
+                if (name != "" and level != "" and type != "" and email != "" and password != "" and confirm_password != ""):
+                    if form.is_valid():
                         error_message = ""
-                        # Hashing passwords before storing them inside the database
-                        hashed_pwd = make_password(password)
-                        new_team = Team()
-                        
-                        # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
-                        # so that users dont accidentally type the wrong password. We do not store the confirm password though
-                        new_team.team_logo = form.cleaned_data['team_logo']
-                        new_team.name = form.cleaned_data['name']
-                        new_team.level = form.cleaned_data['level']
-                        new_team.type = form.cleaned_data['type']
-                        new_team.password = hashed_pwd
-                        new_team.confirm_password = ""
-                        new_team.email = form.cleaned_data['email']
+                        # If both the password match and all the form has been filled out then the team is added to database
+                        if (password == confirm_password):
+                            error_message = ""
+                            # Hashing passwords before storing them inside the database
+                            hashed_pwd = make_password(password)
+                            new_team = Team()
+                            
+                            # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
+                            # so that users dont accidentally type the wrong password. We do not store the confirm password though
+                            new_team.team_logo = form.cleaned_data['team_logo']
+                            new_team.name = form.cleaned_data['name']
+                            new_team.level = form.cleaned_data['level']
+                            new_team.type = form.cleaned_data['type']
+                            new_team.password = hashed_pwd
+                            new_team.confirm_password = ""
+                            new_team.email = form.cleaned_data['email']
+                            
+                            new_team.save()
 
-                        new_team.save()
 
-                        # after adding data to database redirect them to their teams login page so they can access their newly created team
-                        return HttpResponseRedirect(reverse('login', args=(name,)))
+                            # add the two default options to the teams upon login (team logistics and practice plans)
+                            team_logistics = portalOptions.objects.get(name="Logistics")
+                            practice_plans = portalOptions.objects.get(name="Practice Plans")
+                            # if we want to add more default options to the portal in the future we can do that here
+                            new_team.portal_options.add(team_logistics)
+                            new_team.portal_options.add(practice_plans)
+                            
+                            # add the new user to the admin and player fields for the new team
+                            new_team.players.add(activeUser)
+                            new_team.admin.add(activeUser)
+                            activeUser.teams_allowed.add(new_team)
 
-                    # if the two passwords do not match then update the error message and display it so the user knows to fix these
-                    else:
-                        error_message = "The passwords do not match!"
+                            # after adding data to database redirect them to their teams login page so they can access their newly created team
+                            return HttpResponseRedirect(reverse('login', args=(name,)))
 
-            else:
-                error_message = "Please fill out all of the fields before submitting!"
-        
-        # Logic for processing a cancelled form (Redirect them back to the default landing page)
-        elif request.POST.get("Cancel"):
-            print("Cancelling")
-            # redirecting back to default landing page
-            return HttpResponseRedirect(reverse('index'))
-        
+                        # if the two passwords do not match then update the error message and display it so the user knows to fix these
+                        else:
+                            error_message = "The passwords do not match!"
+
+                else:
+                    error_message = "Please fill out all of the fields before submitting!"
+            
+            # Logic for processing a cancelled form (Redirect them back to the default landing page)
+            elif request.POST.get("Cancel"):
+                print("Cancelling")
+                # redirecting back to default landing page
+                return HttpResponseRedirect(reverse('index'))
+            
+        else:
+            form = AddTeamForm()
+
+        # generating context for the front end
+        context = {
+            "error_message": error_message,
+            "form": form,
+        }
+
+        # rendering the page for the user
+        return render(request,"portal/addteam.html", context)
+    
+    # else if not logged in then send them to the sign in page
     else:
-        form = AddTeamForm()
+        context = {}
+        return render(request,"portal/signin.html", context)
 
-    # generating context for the front end
-    context = {
-        "error_message": error_message,
-        "form": form,
-    }
-
-    # rendering the page for the user
-    return render(request,"portal/addteam.html", context)
 
 
 #                                                              DISPLAY PROFILE INFO VIEW
