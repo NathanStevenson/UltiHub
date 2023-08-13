@@ -115,7 +115,7 @@ def addteam(request):
                             # if we want to add more default options to the portal in the future we can do that here
                             new_team.portal_options.add(team_logistics)
                             new_team.portal_options.add(practice_plans)
-                            
+
                             # add the new user to the admin and player fields for the new team
                             new_team.players.add(activeUser)
                             new_team.admin.add(activeUser)
@@ -260,6 +260,12 @@ def portal(request, name):
 
     # User must be authenticated to log into their team portal so we know who they are
     if request.user.is_authenticated:
+        # figure out who the active user is
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        # determine whether the user is an admin of the current team
+        is_admin = activeUser in team.admin.all()
+
         # call this to determine if the user is allowed to view sensitive team info
         user_allowed = helper_isauthorized(request, team)
         # if the user is allowed to view this team
@@ -272,6 +278,7 @@ def portal(request, name):
                 'month': month,
                 'year': year,
                 'team_events': team_events,
+                'is_admin': is_admin,
             }
             return render(request,"portal/portal.html", context)
         
@@ -334,6 +341,9 @@ def team_login(request, name):
                 if matches:
                     # log in will be complete once we add a step where user is authorized to view the team
                     team.players.add(activeUser)
+                    # add the team to the teams allowed for the user for quick access
+                    activeUser.teams_allowed.add(team)
+
                     return HttpResponseRedirect(reverse('portal', args=(name,)))
                 
                 else:
@@ -358,6 +368,110 @@ def team_login(request, name):
     return render(request, "portal/team_login.html", context)
 
 
+#                                                     ADMIN PAGE THAT HAS CUSTOMIZING OPTIONS + PRIVILEGES
+def admin_page(request, name):
+    # get the team name
+    team = Team.objects.get(name=name)
+
+    # user must be logged in else send them to sign in page
+    if request.user.is_authenticated:
+        # get the userID of the current user
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
+      
+        # if the user is allowed
+        if user_allowed and is_admin:
+            # all of the potential values of the Events: "Discussion Board", "Logistics", "Film Room", "Practice Plans"
+            # figure out which options have been checked
+            current_options = team.portal_options.all()
+
+            # setting up to see which events have been checked off
+            db_object = portalOptions.objects.get(name="Discussion Board")
+            log_object = portalOptions.objects.get(name="Logistics")
+            fr_object = portalOptions.objects.get(name="Film Room")
+            pp_object = portalOptions.objects.get(name="Practice Plans")
+
+            # checking which values are active
+            is_db = db_object in current_options
+            is_log = log_object in current_options
+            is_fr = fr_object in current_options
+            is_pp = pp_object in current_options
+
+            # upon the form submission update the teams portal options
+            if request.method == "POST":
+
+                # LOGISTICS
+                # if logistics is checked and not added to the team log then add it
+                if request.POST.get("logistics") and not is_log:
+                    team.portal_options.add(log_object)
+
+                # if they unclick the box and logistics is in the team options then remove it
+                if not request.POST.get("logistics") and is_log:
+                    team.portal_options.remove(log_object)
+
+                # PRACTICE PLANS
+
+                # if practice is checked and not added to the team log then add it
+                if request.POST.get("practice") and not is_pp:
+                    team.portal_options.add(pp_object)
+
+                # if they unclick the box and practice is in the team options then remove it
+                if not request.POST.get("practice") and is_pp:
+                    team.portal_options.remove(pp_object)
+
+                # DISCUSSION BOARD
+
+                # if discussion is checked and not added to the team log then add it
+                if request.POST.get("discussion") and not is_db:
+                    team.portal_options.add(db_object)
+
+                # if they unclick the box and discussion boards is in the team options then remove it
+                if not request.POST.get("discussion") and is_db:
+                    team.portal_options.remove(db_object)
+
+                # FILM ROOM
+
+                # if film is checked and not added to the team log then add it
+                if request.POST.get("film") and not is_fr:
+                    team.portal_options.add(fr_object)
+
+                # if they unclick the box and logistics is in the team options then remove it
+                if not request.POST.get("film") and is_fr:
+                    team.portal_options.remove(fr_object)
+                
+
+                # updating the values for the checkbox
+                current_options = team.portal_options.all()
+                is_db = db_object in current_options
+                is_log = log_object in current_options
+                is_fr = fr_object in current_options
+                is_pp = pp_object in current_options
+
+
+            # context to pass to the front end
+            context = {
+                'is_admin': is_admin,
+                'is_db': is_db,
+                'is_log': is_log,
+                'is_fr': is_fr,
+                'is_pp': is_pp,
+                'name': name,
+            }
+            return render(request, 'portal/admin_page.html', context)
+
+        # if the user is not allowed then send them to unauthorized page
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if user has not logged in then send them to sign in page
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 #                                                                      ADDING UPCOMING TEAM EVENTS VIEW
 def add_event(request, name):

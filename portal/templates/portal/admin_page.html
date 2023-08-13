@@ -1,0 +1,48 @@
+{% extends 'portal/portal.html' %}
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        {% load socialaccount %}
+        <style>
+
+        </style>
+    </head>
+    {% block content %}
+    <body class="vh-100 vw-100" style="background-color:#2E4E6F">
+        <div class='w-50 border border-dark border-2 shadow mx-auto mt-4' style='background-color: lightgray; border-radius: 30px; height: 65%;'>
+            <div class='fw-bold text-center fs-2'>Customize Portal</div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class='d-flex justify-content-evenly mt-3'>
+                    <div>
+                        <input type="checkbox" {% if is_log %} checked {% endif %} class='d-inline-block' onChange="this.form.submit()" name='logistics'>
+                        <div class='d-inline-block'>Logistics</div>
+                    </div>
+                    <div>
+                        <input type="checkbox" {% if is_pp %} checked {% endif %} class='d-inline-block' onChange="this.form.submit()" name='practice'>
+                        <div class='d-inline-block'>Practice Plans</div>
+                    </div>
+                    <div>
+                        <input type="checkbox" {% if is_db %} checked {% endif %} class='d-inline-block' onChange="this.form.submit()" name='discussion'>
+                        <div class='d-inline-block'>Discussion Board</div>
+                    </div>
+                    <div>
+                        <input type="checkbox" {% if is_fr %} checked {% endif %} class='d-inline-block' onChange="this.form.submit()" name='film'>
+                        <div class='d-inline-block'>Film Room</div>
+                    </div>
+                </div>
+            </form>
+
+            <div class='fw-bold text-center fs-2'>Manage Team Members</div>
+            
+        </div>
+    </body>
+    {% endblock content %}
+</html>

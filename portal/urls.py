@@ -18,6 +18,8 @@ urlpatterns = [
     path('<str:name>/login/', views.team_login, name="login"),
     # allows teams to add their custom events to their portal
     path('portal/<str:name>/addevent/', views.add_event, name="add_event"),
+    # this route is only available to users who have admin privileges
+    path('portal/<str:name>/admin/', views.admin_page, name="admin_page"),
 
     # DROPDOWN MENU ROUTES
     # displays profile information about a current user
