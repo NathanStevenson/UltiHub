@@ -21,6 +21,12 @@ urlpatterns = [
     # this route is only available to users who have admin privileges
     path('portal/<str:name>/admin/', views.admin_page, name="admin_page"),
 
+    # GRANTING/REMOVING PERMISSIONS
+    path('portal/<str:name>/grant_admin/<int:userID>/', views.grant_admin, name="grant_admin"),
+    path('portal/<str:name>/remove_admin/<int:userID>/', views.remove_admin, name="remove_admin"),
+    path('portal/<str:name>/add_player/<int:userID>/', views.add_player, name='add_player'),
+    path('portal/<str:name>/remove_player/<int:userID>/', views.remove_player, name='remove_player'),
+
     # DROPDOWN MENU ROUTES
     # displays profile information about a current user
     path('profile/', views.profile, name="profile"),

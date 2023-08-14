@@ -385,6 +385,9 @@ def admin_page(request, name):
       
         # if the user is allowed
         if user_allowed and is_admin:
+            # generate a list of all current players and admin to pass to the front end
+            team_players = team.players.all()
+            team_admin = team.admin.all()
             # all of the potential values of the Events: "Discussion Board", "Logistics", "Film Room", "Practice Plans"
             # figure out which options have been checked
             current_options = team.portal_options.all()
@@ -451,7 +454,6 @@ def admin_page(request, name):
                 is_fr = fr_object in current_options
                 is_pp = pp_object in current_options
 
-
             # context to pass to the front end
             context = {
                 'is_admin': is_admin,
@@ -460,6 +462,8 @@ def admin_page(request, name):
                 'is_fr': is_fr,
                 'is_pp': is_pp,
                 'name': name,
+                'team_players': team_players,
+                'team_admin': team_admin,
             }
             return render(request, 'portal/admin_page.html', context)
 
@@ -529,6 +533,44 @@ def about(request):
     
     context = {}
     return render(request, 'portal/about.html', context)
+
+
+#                                                   GRANTING USER PERMISSIONS VIEWS
+# Giving admin permissions to a team member for the portal
+def grant_admin(request, name, userID):
+    team = Team.objects.get(name=name)
+    activeUser = User.objects.get(id=userID)
+
+    team.admin.add(activeUser)
+
+    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+
+# removing admin permissions for a team memeber for the portal
+def remove_admin(request, name, userID):
+    team = Team.objects.get(name=name)
+    activeUser = User.objects.get(id=userID)
+
+    team.admin.remove(activeUser)
+
+    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+
+# adding a new player to the portal (the new login method)
+def add_player(request, name, userID):
+    team = Team.objects.get(name=name)
+    activeUser = User.objects.get(id=userID)
+
+    team.players.add(activeUser)
+
+    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+
+# removing a player from the portal
+def remove_player(request, name, userID):
+    team = Team.objects.get(name=name)
+    activeUser = User.objects.get(id=userID)
+
+    team.players.remove(activeUser)
+
+    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
 
 
 #                                                                               HELPER FUNCTIONS
