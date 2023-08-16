@@ -156,10 +156,12 @@ def profile(request):
         user_id = request.user.id
         activeUser = User.objects.get(id=user_id)
         # account for whether the user is already logged into a team portal or not so we know what the navbar should display
-
+        allowed_teams = activeUser.teams_allowed.all()
+        print(activeUser.fav_throw)
         # generating context for front-end
         context = {
             'activeUser': activeUser,
+            'allowed_teams': allowed_teams,
         }
         return render(request,"portal/profile.html", context)
 
@@ -220,7 +222,8 @@ def edit_profile(request):
 
             # if cancel is hit take them back to where they came from (index for rn) 
             elif request.POST.get("Cancel"):
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('profile'))
+
 
 
         # generating context for front-end
@@ -304,6 +307,8 @@ def admin_page(request, name):
         # get the userID of the current user
         userID = request.user.id
         activeUser = User.objects.get(id=userID)
+        allowed_teams = activeUser.teams_allowed.all()
+
         # call this to determine if the user is allowed to view sensitive team info
         user_allowed = helper_isauthorized(request, team)
         # figure out whether the user is an admin or not
@@ -390,6 +395,7 @@ def admin_page(request, name):
                 'name': name,
                 'team_players': team_players,
                 'team_admin': team_admin,
+                'allowed_teams': allowed_teams,
             }
             return render(request, 'portal/admin_page.html', context)
 
@@ -654,9 +660,10 @@ def remove_player(request, name, userID):
         # if the user is a part of the team and is also an admin they can add players
         if user_allowed and is_admin:
             team = Team.objects.get(name=name)
-            playerAdded = User.objects.get(id=userID)
+            playerRemoved = User.objects.get(id=userID)
 
-            team.players.remove(playerAdded)
+            team.players.remove(playerRemoved)
+            playerRemoved.teams_allowed.remove(team)
 
             return HttpResponseRedirect(reverse('admin_page', args=(name,)))
         

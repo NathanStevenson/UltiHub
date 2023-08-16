@@ -40,13 +40,23 @@
                     <div class='d-inline-block fw-bold'>
                         <div class='py-1'>Email:</div>
                         <div class='py-1'>Favorite Throw:</div>
-                        <div class='py-1'>Role:</div>
+                        <div class='py-1'>Teams On:</div>
                     </div>
 
                     <div class='d-inline-block ms-3'>
                         <div class='py-1'>{{ activeUser.email }}</div>
-                        <div class='py-1'>{{ activeUser.fav_throw }}</div>
-                        <div class='py-1'>{{ activeUser.role }}</div>
+                        {% if activeUser.fav_throw == "" %}
+                            <div class='py-1'>Not Updated</div>
+                        {% else %}
+                            <div class='py-1'>{{ activeUser.fav_throw }}</div>
+                        {% endif %}
+
+                        {% for team in allowed_teams %}
+                            <div class='py-1'>{{ team.name }} </div>
+                        {% comment %} if the user has no allowed teams {% endcomment %}
+                        {% empty %}
+                            <div class='py-1'>No Teams</div>
+                        {% endfor %}
                     </div>
                 </div>
                 
