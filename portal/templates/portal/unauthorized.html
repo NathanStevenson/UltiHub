@@ -15,11 +15,12 @@
     </head>
     {% block content %}
     <body class="vh-100 vw-100" style="background-color:#2E4E6F">
-        <div class='w-50 h-50 border border-3 border-danger shadow mx-auto mt-5 rounded rounded-3' style='background-color: lightgray;'>
+        <div class='w-50 border border-3 border-danger shadow mx-auto mt-5 rounded rounded-3' style='background-color: lightgray; height: 60%;'>
             <div class='fs-5 p-5 fw-bold border border-2 border-dark rounded rounded-3 m-3'>
-                You are seeing this text because you have not been authorized to view this teams portal page. 
-                If you believe that you should have access please ask your captains or email our developer: nts7bcj@virginia.edu.<br><br>
-                You can find your teams login page: <a href="/{{name}}/login/">{{ name }} login</a><br> Or return to our <a href='/'>home page</a>
+                You are seeing this text because you have not been authorized to view this teams portal page.<br><br>
+                If you believe this is a bug <a href="mailto:nts7bcj@virginia.edu?subject=Permissions Issue">Contact Developer</a><br><br>
+                Contact your Team's Admin to grant access: {% for admin in team_admin %}<div class='d-inline-block'>{{ admin.name }} </div>{% endfor %}<br><br>
+                <a href='/'>Return Home</a><br>
             </div>            
         </div>
     </body>

@@ -14,8 +14,6 @@ urlpatterns = [
     # PORTAL ROUTES
     # Custom team portal that each team can customize
     path('portal/<str:name>/', views.portal, name="portal"),
-    # Team Login to protect teams sensitive information
-    path('<str:name>/login/', views.team_login, name="login"),
     # allows teams to add their custom events to their portal
     path('portal/<str:name>/addevent/', views.add_event, name="add_event"),
     # this route is only available to users who have admin privileges

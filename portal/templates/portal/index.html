@@ -112,7 +112,7 @@
                 {% for team in all_teams %}
                 {% comment %} Anchor tags by default are type inline so if you specify d-block the width behaves as normal {% endcomment %}
                     <a id="team_searched" class='fw-bold py-2 border border-dark border-3 rounded-3 d-block w-100' style='text-decoration: none;' 
-                    href="/{{team.name}}/login/">{{ team.name }}</a>
+                    href="/portal/{{team.name}}/">{{ team.name }}</a>
                 {% endfor %}
             </div>
         </div>

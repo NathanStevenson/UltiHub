@@ -20,12 +20,10 @@ class AddTeamForm(forms.ModelForm):
     level = forms.CharField(required=False)
     type = forms.CharField(required=False)
     email = forms.CharField(required=False)
-    password = forms.CharField(required=False, widget=forms.PasswordInput)
-    confirm_password = forms.CharField(required=False, widget=forms.PasswordInput)
 
     class Meta:
         model = Team
-        fields = ['team_logo', 'name', 'level', 'type', 'email', 'password', 'confirm_password']
+        fields = ['team_logo', 'name', 'level', 'type', 'email']
 
 
 # model form for adding an event. used inside of add_event.html

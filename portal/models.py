@@ -49,8 +49,6 @@ class Team(models.Model):
     name = models.CharField(unique=True)
     type = models.CharField()
     email = models.EmailField()
-    password = models.CharField()
-    confirm_password = models.CharField()
 
     # ManyToMany fields for interacting with other models
 

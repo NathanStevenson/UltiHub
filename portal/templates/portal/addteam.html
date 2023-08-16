@@ -62,19 +62,6 @@
                             {{ form.email }}
                         </div>
                     </div>
-
-                    <div class="d-flex justify-content-evenly">
-                        <div class='w-25'>
-                            <p class='mb-0 mt-2 fw-bold'>Team Password:</p>
-                            {% csrf_token %}
-                            {{ form.password }}
-                        </div>
-                        <div class='w-25'>
-                            <p class='mb-0 mt-2 fw-bold'>Confirm Team Password:</p>
-                            {% csrf_token %}
-                            {{ form.confirm_password }}
-                        </div>
-                    </div>
                 </div>
 
                 {% comment %} Submit and Cancel Buttons {% endcomment %}

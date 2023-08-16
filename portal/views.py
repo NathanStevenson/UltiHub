@@ -82,51 +82,37 @@ def addteam(request):
                 level = request.POST.get("level")
                 type = request.POST.get("type")
                 email = request.POST.get("email")
-                password = request.POST.get("password")
-                confirm_password = request.POST.get("confirm_password")
 
                 # Make sure that all fields have been filled out
-                if (name != "" and level != "" and type != "" and email != "" and password != "" and confirm_password != ""):
+                if (name != "" and level != "" and type != "" and email != ""):
                     if form.is_valid():
                         error_message = ""
-                        # If both the password match and all the form has been filled out then the team is added to database
-                        if (password == confirm_password):
-                            error_message = ""
-                            # Hashing passwords before storing them inside the database
-                            hashed_pwd = make_password(password)
-                            new_team = Team()
-                            
-                            # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
-                            # so that users dont accidentally type the wrong password. We do not store the confirm password though
-                            new_team.team_logo = form.cleaned_data['team_logo']
-                            new_team.name = form.cleaned_data['name']
-                            new_team.level = form.cleaned_data['level']
-                            new_team.type = form.cleaned_data['type']
-                            new_team.password = hashed_pwd
-                            new_team.confirm_password = ""
-                            new_team.email = form.cleaned_data['email']
-                            
-                            new_team.save()
+                        new_team = Team()
+                        
+                        # grab the cleaned data from the form. Store the hash of the password in the DB, and we only have the confirm password 
+                        # so that users dont accidentally type the wrong password. We do not store the confirm password though
+                        new_team.team_logo = form.cleaned_data['team_logo']
+                        new_team.name = form.cleaned_data['name']
+                        new_team.level = form.cleaned_data['level']
+                        new_team.type = form.cleaned_data['type']
+                        new_team.email = form.cleaned_data['email']
+                        
+                        new_team.save()
 
+                        # add the two default options to the teams upon login (team logistics and practice plans)
+                        team_logistics = portalOptions.objects.get(name="Logistics")
+                        practice_plans = portalOptions.objects.get(name="Practice Plans")
+                        # if we want to add more default options to the portal in the future we can do that here
+                        new_team.portal_options.add(team_logistics)
+                        new_team.portal_options.add(practice_plans)
 
-                            # add the two default options to the teams upon login (team logistics and practice plans)
-                            team_logistics = portalOptions.objects.get(name="Logistics")
-                            practice_plans = portalOptions.objects.get(name="Practice Plans")
-                            # if we want to add more default options to the portal in the future we can do that here
-                            new_team.portal_options.add(team_logistics)
-                            new_team.portal_options.add(practice_plans)
+                        # add the new user to the admin and player fields for the new team
+                        new_team.players.add(activeUser)
+                        new_team.admin.add(activeUser)
+                        activeUser.teams_allowed.add(new_team)
 
-                            # add the new user to the admin and player fields for the new team
-                            new_team.players.add(activeUser)
-                            new_team.admin.add(activeUser)
-                            activeUser.teams_allowed.add(new_team)
-
-                            # after adding data to database redirect them to their teams login page so they can access their newly created team
-                            return HttpResponseRedirect(reverse('login', args=(name,)))
-
-                        # if the two passwords do not match then update the error message and display it so the user knows to fix these
-                        else:
-                            error_message = "The passwords do not match!"
+                        # after adding data to database redirect them to their teams login page so they can access their newly created team
+                        return HttpResponseRedirect(reverse('login', args=(name,)))
 
                 else:
                     error_message = "Please fill out all of the fields before submitting!"
@@ -153,7 +139,6 @@ def addteam(request):
     else:
         context = {}
         return render(request,"portal/signin.html", context)
-
 
 
 #                                                              DISPLAY PROFILE INFO VIEW
@@ -249,6 +234,7 @@ def portal(request, name):
     team = ""
     team_events = ""
     team = Team.objects.get(name=name)
+    team_admin = team.admin.all()
 
     # get the current date and parse it into day/month/year
     today = str(datetime.date.today())
@@ -285,87 +271,15 @@ def portal(request, name):
         # if the user is not allowed
         if (not user_allowed):
             context = {
-                'name':name,
+                'name': name,
+                'team_admin': team_admin,
             }
-
             return render(request,"portal/unauthorized.html", context)
     
     # If not autheticated send them to error page stating that they need to sign in in order to continue
     if (not request.user.is_authenticated):
-
-        context = {
-
-        }
-
+        context = {}
         return render(request, "portal/signin.html", context)
-
-
-#                                                               SIGN INTO TEAM PORTAL VIEW
-def team_login(request, name):
-    # Initialization of data
-    team = ""
-    logged_in_msg = ""
-    wrong_password = ""
-    # get the first team with that name (if names are not unique we may need to process by IDs)
-    team = Team.objects.filter(name=name).first()
-
-    if (request.user.is_authenticated):
-        logged_in_msg = ""
-        wrong_password = ""
-        # grab the user who is currently using the site so after logging in we can successfully add that team to their allowed teams so no more logging in
-        userID = request.user.id
-        activeUser = User.objects.get(id=userID)
-
-        # if this user has already signed in before and they have been allowed to view the team then just redirect them to the teams portal to simplify login
-        is_authorized = helper_isauthorized(request, team)
-        if is_authorized:
-            return HttpResponseRedirect(reverse('portal', args=(name,)))
-
-        # on form submission
-        if request.method == "POST":
-            # if the user is submitting the form then process the username and password and then redirect if password is right
-            if request.POST.get("Submit"):
-                username = request.POST.get("username")
-                password = request.POST.get("password")
-
-                # update the users username if they choose to be called something else when entering the portal
-                user = User.objects.get(id=request.user.id)
-                user.name = username
-                user.save()
-
-                # check if the password the user inputted is the same as the hashed teams password
-                hashed_pwd = team.password
-                matches = check_password(password, hashed_pwd)
-                
-                # if password matches then take the user to their portal
-                if matches:
-                    # log in will be complete once we add a step where user is authorized to view the team
-                    team.players.add(activeUser)
-                    # add the team to the teams allowed for the user for quick access
-                    activeUser.teams_allowed.add(team)
-
-                    return HttpResponseRedirect(reverse('portal', args=(name,)))
-                
-                else:
-                    wrong_password = "Password does not match."
-
-
-            # if the user is cancelling the form then redirect them back to the index page to continue their search
-            if request.POST.get("Cancel"):
-                return HttpResponseRedirect(reverse('index'))
-    
-    else:
-        logged_in_msg = "Before logging into your teams portal you must be signed in!"
-
-    # generating context for the front end
-    context = {
-        'name': name,
-        'team': team,
-        'logged_in_msg': logged_in_msg,
-        'wrong_password': wrong_password,
-    }
-
-    return render(request, "portal/team_login.html", context)
 
 
 #                                                     ADMIN PAGE THAT HAS CUSTOMIZING OPTIONS + PRIVILEGES
@@ -469,7 +383,9 @@ def admin_page(request, name):
 
         # if the user is not allowed then send them to unauthorized page
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
     
     # if user has not logged in then send them to sign in page
@@ -543,6 +459,7 @@ def about(request):
 def grant_admin(request, name, userID):
     # get the current team
     team = Team.objects.get(name=name)
+    team_admin = team.admin.all()
     # make sure the user has signed in
     if request.user.is_authenticated:
         # make sure the user is allowed to access the team and has admin privileges to add/remove
@@ -564,7 +481,9 @@ def grant_admin(request, name, userID):
         
         # if the user does not have the proper permissions
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
     
     # if the user has not signed into their account
@@ -576,6 +495,7 @@ def grant_admin(request, name, userID):
 def remove_admin(request, name, userID):
     # get the current team
     team = Team.objects.get(name=name)
+    team_admin = team.admin.all()
     # make sure the user has signed in
     if request.user.is_authenticated:
         # make sure the user is allowed to access the team and has admin privileges to add/remove
@@ -597,7 +517,9 @@ def remove_admin(request, name, userID):
         
         # if the user does not have the proper permissions
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
     
     # if the user has not signed into their account
@@ -610,6 +532,7 @@ def search_player(request, name):
     team = Team.objects.get(name=name)
     # this generates a list of user IDs who are already a member of your team
     team_players_id = team.players.all().values_list('id', flat=True)
+    team_admin = team.admin.all()
 
     # if the user has logged into their google account
     if request.user.is_authenticated:
@@ -652,7 +575,9 @@ def search_player(request, name):
         
         # if they are not an admin
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
 
     # if the user has not logged into their google account have them sign in
@@ -665,6 +590,7 @@ def search_player(request, name):
 def add_player(request, name, userID):
     # get the current team
     team = Team.objects.get(name=name)
+    team_admin = team.admin.all()
     # make sure the user has signed in
     if request.user.is_authenticated:
         # make sure the user is allowed to access the team and has admin privileges to add/remove
@@ -680,13 +606,17 @@ def add_player(request, name, userID):
             team = Team.objects.get(name=name)
             playerAdded = User.objects.get(id=userID)
 
+            # add the chosen player to the team and then team to the chosen player
             team.players.add(playerAdded)
+            playerAdded.teams_allowed.add(team)
 
             return HttpResponseRedirect(reverse('search_player', args=(name,)))
         
         # if the user does not have the proper permissions
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
     
     # if the user has not signed into their account
@@ -698,6 +628,7 @@ def add_player(request, name, userID):
 def remove_player(request, name, userID):
     # get the current team
     team = Team.objects.get(name=name)
+    team_admin = team.admin.all()
     # make sure the user has signed in
     if request.user.is_authenticated:
         # make sure the user is allowed to access the team and has admin privileges to add/remove
@@ -719,7 +650,9 @@ def remove_player(request, name, userID):
         
         # if the user does not have the proper permissions
         else:
-            context = {}
+            context = {
+                'team_admin': team_admin,
+            }
             return render(request, 'portal/unauthorized.html', context)
     
     # if the user has not signed into their account
