@@ -541,21 +541,69 @@ def about(request):
 
 # Giving admin permissions to a team member for the portal
 def grant_admin(request, name, userID):
+    # get the current team
     team = Team.objects.get(name=name)
-    activeUser = User.objects.get(id=userID)
+    # make sure the user has signed in
+    if request.user.is_authenticated:
+        # make sure the user is allowed to access the team and has admin privileges to add/remove
+        activeUserID = request.user.id
+        activeUser = User.objects.get(id=activeUserID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
 
-    team.admin.add(activeUser)
+        # if the user is a part of the team and is also an admin they can add players
+        if user_allowed and is_admin:
+            team = Team.objects.get(name=name)
+            playerAdded = User.objects.get(id=userID)
 
-    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+            team.admin.add(playerAdded)
+
+            return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+        
+        # if the user does not have the proper permissions
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if the user has not signed into their account
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 # removing admin permissions for a team memeber for the portal
 def remove_admin(request, name, userID):
+    # get the current team
     team = Team.objects.get(name=name)
-    activeUser = User.objects.get(id=userID)
+    # make sure the user has signed in
+    if request.user.is_authenticated:
+        # make sure the user is allowed to access the team and has admin privileges to add/remove
+        activeUserID = request.user.id
+        activeUser = User.objects.get(id=activeUserID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
 
-    team.admin.remove(activeUser)
+        # if the user is a part of the team and is also an admin they can add players
+        if user_allowed and is_admin:
+            team = Team.objects.get(name=name)
+            playerAdded = User.objects.get(id=userID)
 
-    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+            team.admin.remove(playerAdded)
+
+            return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+        
+        # if the user does not have the proper permissions
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if the user has not signed into their account
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 # search for your teammate to add to the portal
 def search_player(request, name):
@@ -615,21 +663,69 @@ def search_player(request, name):
 
 # adding a new player to the portal (the new login method)
 def add_player(request, name, userID):
+    # get the current team
     team = Team.objects.get(name=name)
-    activeUser = User.objects.get(id=userID)
+    # make sure the user has signed in
+    if request.user.is_authenticated:
+        # make sure the user is allowed to access the team and has admin privileges to add/remove
+        activeUserID = request.user.id
+        activeUser = User.objects.get(id=activeUserID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
 
-    team.players.add(activeUser)
+        # if the user is a part of the team and is also an admin they can add players
+        if user_allowed and is_admin:
+            team = Team.objects.get(name=name)
+            playerAdded = User.objects.get(id=userID)
 
-    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+            team.players.add(playerAdded)
+
+            return HttpResponseRedirect(reverse('search_player', args=(name,)))
+        
+        # if the user does not have the proper permissions
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if the user has not signed into their account
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 # removing a player from the portal
 def remove_player(request, name, userID):
+    # get the current team
     team = Team.objects.get(name=name)
-    activeUser = User.objects.get(id=userID)
+    # make sure the user has signed in
+    if request.user.is_authenticated:
+        # make sure the user is allowed to access the team and has admin privileges to add/remove
+        activeUserID = request.user.id
+        activeUser = User.objects.get(id=activeUserID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
 
-    team.players.remove(activeUser)
+        # if the user is a part of the team and is also an admin they can add players
+        if user_allowed and is_admin:
+            team = Team.objects.get(name=name)
+            playerAdded = User.objects.get(id=userID)
 
-    return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+            team.players.remove(playerAdded)
+
+            return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+        
+        # if the user does not have the proper permissions
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if the user has not signed into their account
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 
 #                                                                               HELPER FUNCTIONS
