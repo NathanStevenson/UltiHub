@@ -536,6 +536,9 @@ def about(request):
 
 
 #                                                   GRANTING USER PERMISSIONS VIEWS
+
+# add security to this to make sure you cant just remove random ppl from the site
+
 # Giving admin permissions to a team member for the portal
 def grant_admin(request, name, userID):
     team = Team.objects.get(name=name)
@@ -553,6 +556,62 @@ def remove_admin(request, name, userID):
     team.admin.remove(activeUser)
 
     return HttpResponseRedirect(reverse('admin_page', args=(name,)))
+
+# search for your teammate to add to the portal
+def search_player(request, name):
+    team = Team.objects.get(name=name)
+    # this generates a list of user IDs who are already a member of your team
+    team_players_id = team.players.all().values_list('id', flat=True)
+
+    # if the user has logged into their google account
+    if request.user.is_authenticated:
+        # get the userID of the current user
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        # figure out whether the user is an admin or not
+        is_admin = activeUser in team.admin.all()
+
+        # if the user is a part of the team and is also an admin they can add players
+        if user_allowed and is_admin:
+            # initializaiton of data
+            all_players = ""
+            player_inputted = ""
+            length_input = 0
+
+            # form processing for teams users are searching for
+            if request.method == 'GET':
+                player_inputted = request.GET.get('player_search')
+                # this will only be true if team_inputted is not None or an empty string
+                if (player_inputted and player_inputted != ""):
+                    length_input = len(player_inputted)
+                    # [0:5] splices the query set so we only see the first five filtered results
+                    # excludes all players already inside of your team
+                    all_players = User.objects.filter(name__icontains=player_inputted).exclude(id__in=team_players_id)[0:5]
+                else:
+                    player_inputted = ""
+
+            # generating context for the front end
+            context = {
+                'is_admin': is_admin,
+                'all_players': all_players,
+                'player_inputted': player_inputted,
+                'length_input': length_input,
+                'name': name,
+            }
+            return render(request, 'portal/search_player.html', context)
+        
+        # if they are not an admin
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+
+    # if the user has not logged into their google account have them sign in
+    else:
+        context = {}
+        return render(request, 'portal/signin.html')
+
 
 # adding a new player to the portal (the new login method)
 def add_player(request, name, userID):

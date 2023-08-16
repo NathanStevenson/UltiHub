@@ -24,6 +24,7 @@ urlpatterns = [
     # GRANTING/REMOVING PERMISSIONS
     path('portal/<str:name>/grant_admin/<int:userID>/', views.grant_admin, name="grant_admin"),
     path('portal/<str:name>/remove_admin/<int:userID>/', views.remove_admin, name="remove_admin"),
+    path('portal/<str:name>/search_player/', views.search_player, name='search_player'),
     path('portal/<str:name>/add_player/<int:userID>/', views.add_player, name='add_player'),
     path('portal/<str:name>/remove_player/<int:userID>/', views.remove_player, name='remove_player'),
 
