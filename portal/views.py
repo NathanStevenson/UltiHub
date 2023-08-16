@@ -16,6 +16,7 @@ def index(request):
     all_teams = ""
     team_inputted = ""
     length_input = 0
+    allowed_teams = ""
 
     num_teams = len(Team.objects.all())
 
@@ -29,6 +30,12 @@ def index(request):
             all_teams = Team.objects.filter(name__icontains=team_inputted)[0:5]
         else:
             team_inputted = ""
+
+    # if the user has signed in then figure out the teams he is allowed to be on
+    if request.user.is_authenticated:
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        allowed_teams = activeUser.teams_allowed.all()
     
     # generating context to be sent to the frontend
     context = {
@@ -36,6 +43,7 @@ def index(request):
         'team_inputted': team_inputted,
         'length_input': length_input,
         'num_teams': num_teams,
+        'allowed_teams': allowed_teams,
     }
     # returning+rendering the template for the user
     return render(request,"portal/index.html", context)
@@ -233,6 +241,7 @@ def portal(request, name):
     # initialization of the data
     team = ""
     team_events = ""
+    allowed_teams = ""
     team = Team.objects.get(name=name)
     team_admin = team.admin.all()
 
@@ -249,6 +258,8 @@ def portal(request, name):
         # figure out who the active user is
         userID = request.user.id
         activeUser = User.objects.get(id=userID)
+        allowed_teams = activeUser.teams_allowed.all()
+        
         # determine whether the user is an admin of the current team
         is_admin = activeUser in team.admin.all()
 
@@ -265,6 +276,7 @@ def portal(request, name):
                 'year': year,
                 'team_events': team_events,
                 'is_admin': is_admin,
+                'allowed_teams': allowed_teams,
             }
             return render(request,"portal/portal.html", context)
         
