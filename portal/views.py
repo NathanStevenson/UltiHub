@@ -411,48 +411,108 @@ def admin_page(request, name):
         context = {}
         return render(request, 'portal/signin.html', context)
 
-#                                                                      ADDING UPCOMING TEAM EVENTS VIEW
+#                                                        ADDING UPCOMING TEAM EVENTS VIEW
 def add_event(request, name):
-    # initializing all data
-    form = addEventForm()
-    error_message = ""
+    # if the user has signed in
+    if request.user.is_authenticated:
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        allowed_teams = activeUser.teams_allowed.all()
+        is_admin = activeUser in team.admin.all()
 
-    # processing logic
-    if request.method == "POST":
-        # if the form is being submitted
-        if request.POST.get("Submit"):
-            # set the form to have the current POST data
-            form = AddTeamForm(request.POST)
-            # getting the form inputs
-            date = request.POST.get('date')
-            event_name = request.POST.get('event_name')
-            notes = request.POST.get('notes')
-            # make sure none of the values are blank if they are then update error message
-            if (date != "" and event_name != "" and notes != ""):
-                # if the form is valid then save it and send the user back to their portal page
-                error_message = ""
-                if form.is_valid():
-                    newEvent = Event(date=date, event_name=event_name, notes=notes)
-                    newEvent.save()
-                    team = Team.objects.get(name=name)
-                    team.team_events.add(newEvent)
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+        
+        # check if the user is allowed to access the portal
+        if user_allowed:
+            # initializing all data
+            form = addEventForm()
+            error_message = ""
+
+            # processing logic
+            if request.method == "POST":
+                # if the form is being submitted
+                if request.POST.get("Submit"):
+                    # set the form to have the current POST data
+                    form = AddTeamForm(request.POST)
+                    # getting the form inputs
+                    date = request.POST.get('date')
+                    event_name = request.POST.get('event_name')
+                    notes = request.POST.get('notes')
+                    # make sure none of the values are blank if they are then update error message
+                    if (date != "" and event_name != "" and notes != ""):
+                        # if the form is valid then save it and send the user back to their portal page
+                        error_message = ""
+                        if form.is_valid():
+                            newEvent = Event(date=date, event_name=event_name, notes=notes)
+                            newEvent.save()
+                            team = Team.objects.get(name=name)
+                            team.team_events.add(newEvent)
+                            return HttpResponseRedirect(reverse('portal', args=(name,)))
+                    # if any of the fields have a blank value
+                    else:
+                        error_message = "One of your fields is blank. Please fill out all fields!"
+
+                # if the form is cancelled then send the user back to their portal page
+                elif request.POST.get("Cancel"):
                     return HttpResponseRedirect(reverse('portal', args=(name,)))
-            # if any of the fields have a blank value
-            else:
-                error_message = "One of your fields is blank. Please fill out all fields!"
-
-        # if the form is cancelled then send the user back to their portal page
-        elif request.POST.get("Cancel"):
-            return HttpResponseRedirect(reverse('portal', args=(name,)))
 
 
-    # generating context for the front end
-    context = {
-        'form': form,
-        'error_message': error_message,
-    }
+            # generating context for the front end
+            context = {
+                'form': form,
+                'error_message': error_message,
+                'allowed_teams': allowed_teams,
+                'is_admin': is_admin,
+            }
 
-    return render(request, "portal/add_event.html", context)
+            return render(request, "portal/add_event.html", context)
+        
+        # if the user is not authorized to access the portal
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+    
+    # if the user has not signed in at all
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
+
+#                                                VIEW FOR SELECTING CUSTOM PORTAL OPTIONS
+def team_logistics(request, name):
+    team = Team.objects.get(name=name)
+
+    # if the user has signed in
+    if request.user.is_authenticated:
+        userID = request.user.id
+        activeUser = User.objects.get(id=userID)
+        allowed_teams = activeUser.teams_allowed.all()
+        is_admin = activeUser in team.admin.all()
+
+        # call this to determine if the user is allowed to view sensitive team info
+        user_allowed = helper_isauthorized(request, team)
+
+        # if the user is allowed to view the content on this page
+        if user_allowed:
+            portal_options = team.portal_options.all()
+
+            context = {
+                'allowed_teams': allowed_teams,
+                'portal_options': portal_options,
+                'is_admin': is_admin,
+                'name': name,
+            }
+            return render(request, 'portal/team_logistics.html', context)
+        
+        # if the user is not authorized to view the portal 
+        else:
+            context = {}
+            return render(request, 'portal/unauthorized.html', context)
+
+    # if the user has not signed in
+    else:
+        context = {}
+        return render(request, 'portal/signin.html', context)
 
 
 #                                                           CONTACT VIEW PAGE

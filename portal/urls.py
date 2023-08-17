@@ -18,6 +18,8 @@ urlpatterns = [
     path('portal/<str:name>/addevent/', views.add_event, name="add_event"),
     # this route is only available to users who have admin privileges
     path('portal/<str:name>/admin/', views.admin_page, name="admin_page"),
+    # route to team logistics gives the user options to all customizable portal features (more to come in the future)
+    path('portal/<str:name>/team_logistics/', views.team_logistics, name="team_logistics"),
 
     # GRANTING/REMOVING PERMISSIONS
     path('portal/<str:name>/grant_admin/<int:userID>/', views.grant_admin, name="grant_admin"),

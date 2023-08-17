@@ -30,12 +30,12 @@ class User(models.Model):
     role = models.CharField()
     number = models.IntegerField()
     email = models.EmailField()
-    profile_img = models.ImageField(upload_to='pics')
+    profile_img = models.ImageField(upload_to='pics', blank=True)
     team = models.CharField()
 
     # have the player know which teams they are allowed to access in order to efficiently access them via the dropdown menu
     # team is in quotes because it has not been defined yet so this allows Django to have circular redundancies with models
-    teams_allowed = models.ManyToManyField('Team', related_name='teams_allowed')
+    teams_allowed = models.ManyToManyField('Team', related_name='teams_allowed', blank=True)
 
     def __str__(self):
         return str(self.id) + ": " + self.name
@@ -54,11 +54,11 @@ class Team(models.Model):
 
     # the reason we define User as a string is due to the nature of Python not being aware that User is defined
     # this is known as a lazy reference in Django community and allows circular referencing within models.
-    players = models.ManyToManyField(User, related_name='players')
-    admin = models.ManyToManyField(User, related_name='admin')
+    players = models.ManyToManyField(User, related_name='players', blank=True)
+    admin = models.ManyToManyField(User, related_name='admin', blank=True)
 
     # teams can have many events want the same structure
-    team_events = models.ManyToManyField(Event)
+    team_events = models.ManyToManyField(Event, blank=True)
 
     # allow individual teams to have custom portal control
     portal_options = models.ManyToManyField(portalOptions)
